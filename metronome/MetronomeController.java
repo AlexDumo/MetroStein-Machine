@@ -2,8 +2,14 @@ package metronome;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.JComboBox;
+import javax.swing.JTextArea;
+
 import event.Metronome;
 import event.MetronomeListener;
 import resources.Constants;
@@ -16,7 +22,7 @@ import resources.Constants;
  *         This class controls the ClickMachines by telling which one to activate and when. It has
  *         four types of clicks at its disposal.
  */
-public class MetronomeController implements ActionListener, MetronomeListener
+public class MetronomeController implements ActionListener, MetronomeListener, FocusListener
 {
   private Metronome met;
   private boolean metIsRunning;
@@ -36,7 +42,7 @@ public class MetronomeController implements ActionListener, MetronomeListener
     clicker = new ClickMachine();
     met = new Metronome(bpmToMilli(tempo), true);
     met.addListener(this);
-    
+
     timeSignature = Constants.TIME_SIGNATURES[Constants.DEFAULT_TIME_SIGNATURE_INDEX];
     currentBeat = 1;
     clickTypes = new HashMap<>();
@@ -108,13 +114,13 @@ public class MetronomeController implements ActionListener, MetronomeListener
   {
     this.tempo = tempo;
     System.out.println("Tempo " + tempo);
-    
+
     met.stop();
     met = new Metronome(bpmToMilli(tempo));
     met.addListener(this);
-    
+
     // Resumes the met if it was already going.
-    if(metIsRunning)
+    if (metIsRunning)
       met.start();
   }
 
@@ -132,7 +138,8 @@ public class MetronomeController implements ActionListener, MetronomeListener
   }
 
   /**
-   * @param timeSignature the timeSignature to set
+   * @param timeSignature
+   *          the timeSignature to set
    */
   public void setTimeSignature(final TimeSignature timeSignature)
   {
@@ -167,6 +174,15 @@ public class MetronomeController implements ActionListener, MetronomeListener
         metIsRunning = false;
         currentBeat = 1;
         break;
+      case Constants.INCREMENT:
+        setTempo(tempo + 1);
+        break;
+      case Constants.DECREMENT:
+        setTempo(tempo - 1);
+        break;
+      case Constants.METER_CHANGE:
+        setTimeSignature((TimeSignature) ((JComboBox<TimeSignature>) e.getSource()).getSelectedItem());
+        break;
       default:
         break;
 
@@ -197,5 +213,27 @@ public class MetronomeController implements ActionListener, MetronomeListener
   {
     int output = (int) ((60.0 / bpm) * 1000);
     return output;
+  }
+
+  @Override
+  public void focusGained(FocusEvent e)
+  {
+  }
+
+  @Override
+  public void focusLost(FocusEvent e)
+  {
+    try
+    {
+      int newTempo = Integer.parseInt(((JTextArea) e.getSource()).getText());
+      if (newTempo <= 0)
+        newTempo = 60;
+      else if (newTempo > 300)
+        newTempo = 300;
+      setTempo(newTempo);
+    }
+    catch (NumberFormatException exception)
+    {
+    }
   }
 }
