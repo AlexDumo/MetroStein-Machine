@@ -4,9 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 
@@ -29,7 +27,7 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
   private int tempo;
   private ClickMachine clicker;
   private TimeSignature timeSignature;
-  private Map<Integer, Integer> clickTypes;
+  private ArrayList<Integer> clickTypesArrayList;
   private int currentBeat;
 
   /**
@@ -43,14 +41,13 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
     met = new Metronome(bpmToMilli(tempo), true);
     met.addListener(this);
 
-    timeSignature = Constants.TIME_SIGNATURES[Constants.DEFAULT_TIME_SIGNATURE_INDEX];
+    clickTypesArrayList = new ArrayList<Integer>();
+    setTimeSignature(TimeSignature.TIME_SIGNATURES[TimeSignature.DEFAULT_TIME_SIGNATURE_INDEX]);
     currentBeat = 1;
-    clickTypes = new HashMap<>();
-
-    clickTypes.put(1, 0);
-    clickTypes.put(3, 2);
-    clickTypes.put(-12, 123);
-    clickTypes.put(4, -1);
+    clickTypesArrayList.set(0, 0);
+    clickTypesArrayList.set(1, 987);
+    clickTypesArrayList.set(2, 2);
+    clickTypesArrayList.set(3, -1);
   }
 
   /**
@@ -69,14 +66,10 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
     if (beatNumber < 0 || beatNumber > timeSignature.getNumerator())
       return;
 
-    // Remove current beat from the set if it exists
-    // if (clickTypes.containsKey(beatNumber))
-    // clickTypes.remove(beatNumber);
-
     if (clickToUse < ClickMachine.CLICK_MIN || clickToUse > ClickMachine.CLICK_MAX)
-      clickTypes.put(beatNumber, 1); // Invalid number
+      clickTypesArrayList.add(beatNumber - 1, 1); // Invalid click number
     else
-      clickTypes.put(beatNumber, clickToUse);
+      clickTypesArrayList.add(beatNumber - 1, clickToUse);
   }
 
   /**
@@ -84,18 +77,17 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
    * already has a click type, it will overwrite it. If there is an invalid input, it will reset to
    * the default click (1).
    * 
-   * @param typeMap
-   *          The Map<beatNumber, clickToUse> of the instructions. Invalid beat numbers are ignored.
+   * @param typeArray
+   *          The ArrayList<Integer> of the instructions. Invalid beat numbers are ignored.
    *          Invalid click types are set to the default.
    */
-  public void setClickType(final Map<Integer, Integer> typeMap)
+  public void setClickTypes(final ArrayList<Integer> typeArray)
   {
     // Loops through the map
-    for (int beatNumber : typeMap.keySet())
-      for (int clickType : typeMap.values())
-        setClickType(beatNumber, clickType);
+    for (int i = 0; i < typeArray.size(); i ++)
+       setClickType(i + 1, typeArray.get(i));
   }
-
+  
   /**
    * @return the tempo
    */
@@ -143,6 +135,12 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
    */
   public void setTimeSignature(final TimeSignature timeSignature)
   {
+    clickTypesArrayList.clear();
+    clickTypesArrayList.ensureCapacity(timeSignature.getNumerator());
+    
+    for(int i = 0; i < timeSignature.getNumerator(); i ++)
+      clickTypesArrayList.add(i, Constants.DEFAULT_CLICK);
+    clickTypesArrayList.set(0, 0);
     this.timeSignature = timeSignature;
   }
 
@@ -153,6 +151,19 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
   {
     return timeSignature;
   }
+  
+  /**
+   * Adds the given MetronomeListener to the owning Metronome.
+   * 
+   * @param metronomeListener the MetronomeListener to add
+   */
+  public void addMetronomeListener(MetronomeListener metronomeListener)
+  {
+    if(metronomeListener != null)
+      met.addListener(metronomeListener);
+  }
+  
+  // ---------- Override Methods ----------
 
   /**
    * Action performed override.
@@ -160,7 +171,7 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
   @Override
   public void actionPerformed(ActionEvent e)
   {
-    // Starts and stops the metronome
+    // Starts, and increments the metronome
     switch (e.getActionCommand())
     {
       case Constants.START:
@@ -184,9 +195,15 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
         setTimeSignature((TimeSignature) ((JComboBox<TimeSignature>) e.getSource()).getSelectedItem());
         break;
       default:
+        System.out.println(e.getActionCommand());
         break;
 
     }
+  }
+  
+  public static int[] getBeatActionCommand(String ac)
+  {
+    return null;
   }
 
   // Overrides the click
@@ -197,22 +214,10 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
     if (currentBeat > timeSignature.getNumerator())
       currentBeat = 1;
 
-    clicker.click(clickTypes.containsKey(currentBeat) ? clickTypes.get(currentBeat) : 1);
+    System.out.println(clickTypesArrayList);
+    clicker.click(clickTypesArrayList.get(currentBeat - 1));
 
     currentBeat++;
-  }
-
-  /*
-   * Converts bpm (beats per minute) to milliseconds per tick.
-   * 
-   * @param bpm The desired bpm
-   * 
-   * @return The milliseconds per click
-   */
-  private static int bpmToMilli(int bpm)
-  {
-    int output = (int) ((60.0 / bpm) * 1000);
-    return output;
   }
 
   @Override
@@ -235,5 +240,20 @@ public class MetronomeController implements ActionListener, MetronomeListener, F
     catch (NumberFormatException exception)
     {
     }
+  }
+
+  // ---------- Static Methods ----------
+  
+  /*
+   * Converts bpm (beats per minute) to milliseconds per tick.
+   * 
+   * @param bpm The desired bpm
+   * 
+   * @return The milliseconds per click
+   */
+  private static int bpmToMilli(int bpm)
+  {
+    int output = (int) ((60.0 / bpm) * 1000);
+    return output;
   }
 }

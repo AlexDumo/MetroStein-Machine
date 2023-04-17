@@ -53,8 +53,9 @@ public class LeftPanel extends MetronomePanel
 
     c.gridx = 1;
     c.gridy = 0;
-    c.gridwidth = 3;
+    c.gridwidth = 4;
     accentSlider = new JSlider(0, 127, 0);
+    accentSlider.setBounds(0, 0, 50, 0);
     this.add(accentSlider, c);
 
     c.gridy = 1;
