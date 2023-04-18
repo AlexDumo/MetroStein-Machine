@@ -15,6 +15,8 @@ import javax.swing.JTextArea;
 
 import main.MetroSteinMachine;
 import metronome.MetronomeController;
+import metronome.MetronomeObserver;
+import metronome.MetronomeSubject;
 import resources.Constants;
 
 /**
@@ -22,7 +24,7 @@ import resources.Constants;
  *
  *         This work complies with the JMU Honor Code.
  */
-public class MiddlePanel extends MetronomePanel implements ActionListener, FocusListener
+public class MiddlePanel extends MetronomePanel implements ActionListener, FocusListener, MetronomeObserver
 {
   private JButton startButton, incrementButton, decrementButton, tapButton;
   private JTextArea tempoInput;
@@ -113,6 +115,16 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
   {
     return tempoInput;
   }
+  
+  /**
+   * For use by the update method for the observer pattern. Updates the JTextArea.
+   * 
+   * @param newTemo
+   */
+  private void setTempo(int newTemo)
+  {
+    tempoInput.setText(Integer.toString(newTemo));
+  }
 
   @Override
   public void actionPerformed(ActionEvent e)
@@ -173,8 +185,15 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
     startButton.addActionListener(metronomeController);
     incrementButton.addActionListener(metronomeController);
     decrementButton.addActionListener(metronomeController);
-
     tempoInput.addFocusListener(metronomeController);
+    
+    metronomeController.addObserver(this);
+  }
+
+  @Override
+  public void update(MetronomeSubject metronomeSubject)
+  {
+    setTempo(((MetronomeController) metronomeSubject).getTempo());
   }
 
 }

@@ -12,13 +12,17 @@ import metronome.TimeSignature;
  * Contains constants for the MetroSteinMachine to use across all classes.
  */
 public class Constants
-{
+{  
   public static final int WIDTH = 600, HEIGHT = 600;
+  
+  public static final char DELIMITER = '$';
   
   public static final String 
       INCREMENT = "+", DECREMENT = "-", 
       START = "start", STOP = "stop",
       METER_CHANGE = "meterChange";
+  
+  
 
   public static final int 
       DEFAULT_TIME_SIGNATURE_INDEX = 3, 

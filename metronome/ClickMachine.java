@@ -6,8 +6,6 @@ package metronome;
  * This work complies with the JMU Honor Code.
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.sound.sampled.LineUnavailableException;
 
 import auditory.sampled.BoomBox;
@@ -15,9 +13,10 @@ import auditory.sampled.BufferedSound;
 import auditory.sampled.BufferedSoundFactory;
 import io.ResourceFinder;
 
-public class ClickMachine implements ActionListener
+public class ClickMachine
 {
-  public static final int CLICK_MIN = -1, CLICK_MAX = 3, DEFAULT_CLICK = 1;
+  public static final int CLICK_MIN = -1, CLICK_MAX = 3, CLICK_DEFAULT = 1, CLICK_OFF = -1,
+      CLICK_ACCENT = 0, CLICK_SECONDARY_ACCENT = 2, CLICK_SUBDIVISION = 3;
   public static final String[] clickerNames = {"0.wav", "1.wav", "2.wav", "3.wav"};
 
   private BoomBox[] boomboxes;
@@ -89,9 +88,11 @@ public class ClickMachine implements ActionListener
     try
     {
       if (clickNum < CLICK_MIN || clickNum > CLICK_MAX)
-        boomboxes[DEFAULT_CLICK].start(false);
-      else if(clickNum == -1) {}
-      else 
+        boomboxes[CLICK_DEFAULT].start(false);
+      else if (clickNum == -1)
+      {
+      }
+      else
         boomboxes[clickNum].start(false);
     }
     catch (LineUnavailableException e)
@@ -100,18 +101,4 @@ public class ClickMachine implements ActionListener
       e.printStackTrace();
     }
   }
-
-  /**
-   * Handle actionPerformed messages (required by ActionListener)
-   *
-   * @param ae
-   *          The ActionEvent that generated the message
-   */
-  @Override
-  public void actionPerformed(final ActionEvent ae)
-  {
-    click(0);
-  }
-
 }
-
