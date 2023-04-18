@@ -24,9 +24,8 @@ public class LeftPanel extends MetronomePanel
   public LeftPanel()
   {
     super(new GridBagLayout());
-    this.setPreferredSize(
-        new Dimension(Constants.WIDTH / 3, Constants.HEIGHT - 30));
-    
+    this.setPreferredSize(new Dimension(Constants.WIDTH / 3, Constants.HEIGHT - 30));
+
     JSlider accentSlider, eigthSlider, sixteenthSlider, tripletSlider;
 
     GridBagConstraints c = new GridBagConstraints();
@@ -70,19 +69,19 @@ public class LeftPanel extends MetronomePanel
     sixteenthSlider = new JSlider(0, 127, 0);
     this.add(sixteenthSlider, c);
   }
-  
+
   /**
    * Constructs the left panel of the metronome and adds a MetronomeController to the necessary
    * listeners.
    * 
-   * @param metronomeController the MetronomeController to add to the listeners.
+   * @param metronomeController
+   *          the MetronomeController to add to the listeners.
    */
   public LeftPanel(MetronomeController metronomeController)
   {
     this();
     setMetronomeListeners(metronomeController);
   }
-
 
   @Override
   public void setMetronomeListeners(MetronomeController metronomeController)

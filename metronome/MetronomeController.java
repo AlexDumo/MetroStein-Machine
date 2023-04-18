@@ -27,37 +27,51 @@ import resources.Constants;
 public class MetronomeController
     implements ActionListener, MetronomeListener, FocusListener, MetronomeSubject
 {
-//  private Metronome met;
   private Metronome met;
-  private boolean metIsRunning;
+  private SubdivisionController subdivisionController;
+  private double subdivisionMultiplier;
   private double tempo;
-  private ClickMachine clicker;
-  private TimeSignature timeSignature;
-  private ArrayList<Integer> clickTypes;
-  private int currentBeat;
+  protected ClickMachine clicker;
+  protected TimeSignature timeSignature;
+  protected ArrayList<Integer> clickTypes;
+  protected int currentBeat;
 
-  private Set<MetronomeObserver> metronomeObservers; 
+  private boolean isSubdivision, subdivisionOn;
+
+  private Set<MetronomeObserver> metronomeObservers;
   private Set<FrequentMetronomeObserver> frequentObservers;
 
   /**
    * Default constructor. Sets tempo to 120bpm and time signature to 4/4.
    */
-  public MetronomeController()
+  public MetronomeController(boolean isSubdivision)
   {
     metronomeObservers = new HashSet<>();
     frequentObservers = new HashSet<>();
     tempo = Constants.DEFAULT_TEMPO;
-    metIsRunning = false;
     clicker = new ClickMachine();
     met = new metronome.Metronome();
     met.setTempo(tempo);
     met.addListener(this);
-//    met = new Metronome(bpmToMilli(tempo), true);
-//    met.addListener(this);
+    this.isSubdivision = isSubdivision;
+    subdivisionOn = true;
+    subdivisionMultiplier = 3;
 
     clickTypes = new ArrayList<Integer>();
     setTimeSignature(TimeSignature.getDefaultTimeSignature());
     currentBeat = 1;
+
+    if (!isSubdivision)
+    {
+      subdivisionController = new SubdivisionController();
+      subdivisionController.setDelay((int) (met.getDelay() / subdivisionMultiplier));
+      subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(3, 4));
+    }
+  }
+
+  public MetronomeController()
+  {
+    this(false);
   }
 
   /**
@@ -117,6 +131,18 @@ public class MetronomeController
   }
 
   /**
+   * Sets the tempo of the controller. Works when the metronome is on.
+   * 
+   * @param tempo
+   *          the tempo to set
+   */
+  public void setTempo(double tempo)
+  {
+    System.out.println("Tempo " + tempo);
+    setDelay(Metronome.bpmToMilli(tempo));;
+  }
+
+  /**
    * @return the tempo
    */
   public double getTempo()
@@ -130,21 +156,21 @@ public class MetronomeController
    * @param tempo
    *          the tempo to set
    */
-  public void setTempo(double tempo)
+  public void setDelay(int delay)
   {
-    this.tempo = tempo;
-    System.out.println("Tempo " + tempo);
+    System.out.printf("Old delay %d, New Delay: %d\n", Metronome.bpmToMilli(tempo), delay);
+    this.tempo = Metronome.milliToBpm(delay);
+    met.setDelay(delay);
+    if (subdivisionController != null)
+      subdivisionController.setDelay((int) (getDelay() / subdivisionMultiplier));
+  }
 
-    met.setTempo(tempo);
-//    met.stop();
-////    met = new Metronome(bpmToMilli(tempo));
-//    met = new metronome.Metronome(bpmToMilli(tempo));
-//    met.addListener(this);
-//
-//    // Resumes the met if it was already going.
-//    if (metIsRunning)
-//      met.start(false);
-
+  /**
+   * @return the Metronome's delay.
+   */
+  public int getDelay()
+  {
+    return met.getDelay();
   }
 
   /**
@@ -184,6 +210,45 @@ public class MetronomeController
       met.addListener(metronomeListener);
   }
 
+  /**
+   * Starts the metronome.
+   */
+  public void start(boolean initialClick)
+  {
+    met.start(initialClick);
+    if (subdivisionOn && !isSubdivision)
+      subdivisionController.start(true);
+  }
+
+  /**
+   * Stops the metronome.
+   */
+  public void stop()
+  {
+    met.stop();
+    currentBeat = 1;
+
+    // subdivisionController.stop();
+  }
+  
+  /**
+   * Sets the subdivision of the metronome controller.
+   * 
+   * @param subdivision
+   */
+  public void setSubdivision(Subdivision subdivision)
+  {
+    subdivisionController.stop();
+    subdivisionMultiplier = subdivision.beats;
+    
+    if(subdivisionMultiplier == 1)
+      subdivisionOn = false;
+    else {
+      subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(subdivision.beats, 4));
+      subdivisionController.setDelay((getDelay() / subdivision.beats));
+    }
+  }
+
   // ---------- Override Methods ----------
 
   /**
@@ -213,17 +278,10 @@ public class MetronomeController
     switch (acString)
     {
       case Constants.START:
-//        clicker.click(clickTypes.get(0));
-        met.start(true);
-//        met2.start();
-        metIsRunning = true;
-//        notifyFrequentObservers();
-//        currentBeat++;
+        start(true);
         break;
       case Constants.STOP:
-        met.stop();
-        metIsRunning = false;
-        currentBeat = 1;
+        stop();
         break;
       case Constants.INCREMENT:
         setTempo(tempo + 1);
@@ -237,6 +295,9 @@ public class MetronomeController
         break;
       case BeatSelector.BEAT_COMMAND:
         setClickType(Integer.parseInt(acArgs.get(1)), Integer.parseInt(acArgs.get(2)));
+        break;
+      case Constants.SUBDIVISION_CHANGE:
+        setSubdivision((Subdivision)((JComboBox<Subdivision>) e.getSource()).getSelectedItem());
         break;
       case "test":
         break;
@@ -252,11 +313,13 @@ public class MetronomeController
   @Override
   public void handleTick(int millis)
   {
+    if (subdivisionOn)
+      subdivisionController.start(false);
     // Reset to the start of the measure
     if (currentBeat > timeSignature.getNumerator())
       currentBeat = 1;
 
-//    System.out.println("current beat " + currentBeat);
+    // System.out.println("current beat " + currentBeat);
     clicker.click(clickTypes.get(currentBeat - 1));
 
     notifyFrequentObservers();
@@ -293,8 +356,6 @@ public class MetronomeController
 
   // ---------- Static Methods ----------
 
-
-
   @Override
   public void addObserver(MetronomeObserver observer)
   {
@@ -324,6 +385,7 @@ public class MetronomeController
   public void notifyFrequentObservers()
   {
     for (FrequentMetronomeObserver cur : frequentObservers)
-      cur.frequentUpdate(this);;
+      cur.frequentUpdate(this);
+    ;
   }
 }

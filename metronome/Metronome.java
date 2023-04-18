@@ -94,6 +94,8 @@ public class Metronome
   {
     boolean wasRunning = running;
     stop();
+    
+    delay = newDelay;
 
     timer = new Timer(newDelay, listener);
 
@@ -188,7 +190,7 @@ public class Metronome
    * 
    * @return The milliseconds per click.
    */
-  private static int bpmToMilli(double bpm)
+  protected static int bpmToMilli(double bpm)
   {
     return (int) (60000 / bpm);
   }
@@ -200,7 +202,7 @@ public class Metronome
    * 
    * @return The bpm
    */
-  private static double milliToBpm(int milli)
+  protected static double milliToBpm(int milli)
   {
     return 60000.0 / milli;
   }

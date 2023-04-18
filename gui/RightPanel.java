@@ -8,6 +8,7 @@ import javax.swing.JComboBox;
 import metronome.MetronomeController;
 import metronome.MetronomeObserver;
 import metronome.MetronomeSubject;
+import metronome.Subdivision;
 import metronome.TimeSignature;
 import resources.Constants;
 
@@ -20,6 +21,7 @@ public class RightPanel extends MetronomePanel implements ActionListener, Metron
 {    
   private BeatSelectorPanel beatSelectorPanel;
   private JComboBox<TimeSignature> timeSignatureComboBox;
+  private JComboBox<Subdivision> subdivisionComboBox;
   
   /**
    * Constructs the right panel of the metronome.
@@ -35,6 +37,13 @@ public class RightPanel extends MetronomePanel implements ActionListener, Metron
     timeSignatureComboBox.setActionCommand(Constants.METER_CHANGE);
     timeSignatureComboBox.addActionListener(this);
     this.add(timeSignatureComboBox, BorderLayout.PAGE_START);
+    
+    // Subdivision Selector
+    subdivisionComboBox = new JComboBox<Subdivision>(Subdivision.values());
+    subdivisionComboBox.setSelectedItem(Subdivision.None);
+    subdivisionComboBox.setActionCommand(Constants.SUBDIVISION_CHANGE);
+    timeSignatureComboBox.addActionListener(this);
+    this.add(subdivisionComboBox, BorderLayout.SOUTH);
 
     // Beat Type Selectors
     beatSelectorPanel = new BeatSelectorPanel(TimeSignature.getDefaultTimeSignature());
@@ -58,6 +67,7 @@ public class RightPanel extends MetronomePanel implements ActionListener, Metron
   {
     beatSelectorPanel.addActionListener(metronomeController);
     timeSignatureComboBox.addActionListener(metronomeController);
+    subdivisionComboBox.addActionListener(metronomeController);
 
     metronomeController.addObserver(beatSelectorPanel);
     metronomeController.addObserver(this);
