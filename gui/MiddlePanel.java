@@ -9,11 +9,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 
-import main.MetroSteinMachine;
 import metronome.MetronomeController;
 import metronome.MetronomeObserver;
 import metronome.MetronomeSubject;
@@ -28,7 +28,7 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
 {
   private JButton startButton, incrementButton, decrementButton, tapButton;
   private JTextArea tempoInput;
-  int tempo; // This is just for form error corrections
+  double tempo; // This is just for form error corrections
 
   /**
    * Constructs the middle panel of the metronome.
@@ -121,9 +121,10 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
    * 
    * @param newTemo
    */
-  private void setTempo(int newTemo)
+  private void setTempo(double newTemo)
   {
-    tempoInput.setText(Integer.toString(newTemo));
+    DecimalFormat df = new DecimalFormat("#.##");
+    tempoInput.setText(df.format(tempo));
   }
 
   @Override
@@ -140,10 +141,12 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
         startButton.setText(Constants.START);
         break;
       case Constants.INCREMENT:
-        tempoInput.setText(Integer.toString(++tempo));
+        tempo = (int)(tempo + 1);
+        setTempo((double) tempo);
         break;
       case Constants.DECREMENT:
-        tempoInput.setText(Integer.toString(--tempo));
+        tempo = (int)(tempo - 1);
+        setTempo((double) tempo);
         break;
       default:
         break;
@@ -164,11 +167,11 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
     System.out.println("You're out of Focus! " + ((JTextArea) e.getSource()).getText());
     try
     {
-      int newTempo = Integer.parseInt(((JTextArea) e.getSource()).getText());
+      double newTempo = Double.parseDouble(((JTextArea) e.getSource()).getText());
       if (newTempo <= 0)
-        newTempo = 60;
-      else if (newTempo > 300)
-        newTempo = 300;
+        newTempo = Constants.DEFAULT_SLOW;
+      else if (newTempo > Constants.MAX_TEMPO)
+        newTempo = Constants.MAX_TEMPO;
       tempo = newTempo;
     }
     catch (NumberFormatException exception)
@@ -176,7 +179,7 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
       System.out.println("Not a valid number");
     }
     // Sets the new tempo when an error is caught. If no error, this is the same anyway.
-    ((JTextArea) e.getSource()).setText("" + tempo);
+    setTempo(tempo);
   }
 
   @Override

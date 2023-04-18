@@ -13,8 +13,6 @@ import java.util.StringTokenizer;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 
-import event.Metronome;
-import event.MetronomeListener;
 import gui.BeatSelector;
 import resources.Constants;
 
@@ -29,9 +27,10 @@ import resources.Constants;
 public class MetronomeController
     implements ActionListener, MetronomeListener, FocusListener, MetronomeSubject
 {
+//  private Metronome met;
   private Metronome met;
   private boolean metIsRunning;
-  private int tempo;
+  private double tempo;
   private ClickMachine clicker;
   private TimeSignature timeSignature;
   private ArrayList<Integer> clickTypes;
@@ -50,8 +49,11 @@ public class MetronomeController
     tempo = Constants.DEFAULT_TEMPO;
     metIsRunning = false;
     clicker = new ClickMachine();
-    met = new Metronome(bpmToMilli(tempo), true);
+    met = new metronome.Metronome();
+    met.setTempo(tempo);
     met.addListener(this);
+//    met = new Metronome(bpmToMilli(tempo), true);
+//    met.addListener(this);
 
     clickTypes = new ArrayList<Integer>();
     setTimeSignature(TimeSignature.getDefaultTimeSignature());
@@ -117,7 +119,7 @@ public class MetronomeController
   /**
    * @return the tempo
    */
-  public int getTempo()
+  public double getTempo()
   {
     return tempo;
   }
@@ -128,18 +130,20 @@ public class MetronomeController
    * @param tempo
    *          the tempo to set
    */
-  public void setTempo(int tempo)
+  public void setTempo(double tempo)
   {
     this.tempo = tempo;
     System.out.println("Tempo " + tempo);
 
-    met.stop();
-    met = new Metronome(bpmToMilli(tempo));
-    met.addListener(this);
-
-    // Resumes the met if it was already going.
-    if (metIsRunning)
-      met.start();
+    met.setTempo(tempo);
+//    met.stop();
+////    met = new Metronome(bpmToMilli(tempo));
+//    met = new metronome.Metronome(bpmToMilli(tempo));
+//    met.addListener(this);
+//
+//    // Resumes the met if it was already going.
+//    if (metIsRunning)
+//      met.start(false);
 
   }
 
@@ -209,11 +213,12 @@ public class MetronomeController
     switch (acString)
     {
       case Constants.START:
-        clicker.click(clickTypes.get(0));
-        met.start();
+//        clicker.click(clickTypes.get(0));
+        met.start(true);
+//        met2.start();
         metIsRunning = true;
-        notifyFrequentObservers();
-        currentBeat++;
+//        notifyFrequentObservers();
+//        currentBeat++;
         break;
       case Constants.STOP:
         met.stop();
@@ -276,9 +281,9 @@ public class MetronomeController
     {
       int newTempo = Integer.parseInt(((JTextArea) e.getSource()).getText());
       if (newTempo <= 0)
-        newTempo = 60;
-      else if (newTempo > 300)
-        newTempo = 300;
+        newTempo = Constants.DEFAULT_SLOW;
+      else if (newTempo > Constants.MAX_TEMPO)
+        newTempo = Constants.MAX_TEMPO;
       setTempo(newTempo);
     }
     catch (NumberFormatException exception)
@@ -288,18 +293,7 @@ public class MetronomeController
 
   // ---------- Static Methods ----------
 
-  /*
-   * Converts bpm (beats per minute) to milliseconds per tick.
-   * 
-   * @param bpm The desired bpm
-   * 
-   * @return The milliseconds per click
-   */
-  private static int bpmToMilli(int bpm)
-  {
-    int output = (int) ((60.0 / bpm) * 1000);
-    return output;
-  }
+
 
   @Override
   public void addObserver(MetronomeObserver observer)

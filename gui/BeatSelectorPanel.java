@@ -10,13 +10,12 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import event.MetronomeListener;
 import metronome.FrequentMetronomeObserver;
 import metronome.MetronomeController;
+import metronome.MetronomeListener;
 import metronome.MetronomeObserver;
 import metronome.MetronomeSubject;
 import metronome.TimeSignature;
-import resources.Constants;
 
 /**
  * @author Alexander Dumouchelle

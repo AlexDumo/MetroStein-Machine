@@ -27,7 +27,8 @@ public class Constants
   public static final int 
       DEFAULT_TIME_SIGNATURE_INDEX = 3, 
       DEFAULT_TEMPO = 120, 
-      DEFAULT_CLICK = 1;
+      DEFAULT_CLICK = 1,
+      MAX_TEMPO = 500, DEFAULT_SLOW = 60;
   
   
 }

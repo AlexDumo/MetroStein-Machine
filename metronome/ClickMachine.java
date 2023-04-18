@@ -4,6 +4,8 @@ package metronome;
  * @author Alexander Dumouchelle
  *
  * This work complies with the JMU Honor Code.
+ * 
+ * All this class does is click.
  */
 
 import javax.sound.sampled.LineUnavailableException;
