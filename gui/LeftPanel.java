@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 
-import main.MetroSteinMachine;
 import metronome.MetronomeController;
 import resources.Constants;
 
@@ -16,6 +15,7 @@ import resources.Constants;
  *
  *         This work complies with the JMU Honor Code.
  */
+@SuppressWarnings("serial")
 public class LeftPanel extends MetronomePanel
 {
   /**

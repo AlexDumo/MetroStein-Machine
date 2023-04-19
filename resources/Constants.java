@@ -1,9 +1,5 @@
 package resources;
 
-import java.awt.Color;
-
-import metronome.TimeSignature;
-
 /**
  * @author Alexander Dumouchelle
  *

@@ -14,6 +14,7 @@ import resources.Constants;
  *
  *         This work complies with the JMU Honor Code.
  */
+@SuppressWarnings("serial")
 public class BeatSelector extends JButton implements ActionListener
 {
   public static enum State

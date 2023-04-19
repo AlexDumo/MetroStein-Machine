@@ -24,6 +24,7 @@ import resources.Constants;
  *
  *         This work complies with the JMU Honor Code.
  */
+@SuppressWarnings("serial")
 public class MiddlePanel extends MetronomePanel implements ActionListener, FocusListener, MetronomeObserver
 {
   private JButton startButton, incrementButton, decrementButton, tapButton;

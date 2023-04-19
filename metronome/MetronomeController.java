@@ -255,6 +255,7 @@ public class MetronomeController
   /**
    * Action performed override.
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void actionPerformed(ActionEvent e)
   {

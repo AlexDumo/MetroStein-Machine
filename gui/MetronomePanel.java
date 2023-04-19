@@ -1,11 +1,8 @@
 package gui;
 
 import java.awt.LayoutManager;
-import java.awt.event.ActionListener;
-
 import javax.swing.JPanel;
 
-import main.MetroSteinMachine;
 import metronome.MetronomeController;
 
 /**
@@ -13,6 +10,7 @@ import metronome.MetronomeController;
  *
  * This work complies with the JMU Honor Code.
  */
+@SuppressWarnings("serial")
 public abstract class MetronomePanel extends JPanel
 {
   

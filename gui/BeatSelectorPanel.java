@@ -22,6 +22,7 @@ import metronome.TimeSignature;
  *
  *         This work complies with the JMU Honor Code.
  */
+@SuppressWarnings("serial")
 public class BeatSelectorPanel extends JPanel
     implements MetronomeListener, ActionListener, MetronomeObserver, FrequentMetronomeObserver
 {

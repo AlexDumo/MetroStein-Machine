@@ -1,10 +1,5 @@
 package metronome;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import resources.Constants;
-
 /**
  * @author Alexander Dumouchelle
  *

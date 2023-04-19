@@ -17,6 +17,7 @@ import resources.Constants;
  *
  * This work complies with the JMU Honor Code.
  */
+@SuppressWarnings("serial")
 public class RightPanel extends MetronomePanel implements ActionListener, MetronomeObserver
 {    
   private BeatSelectorPanel beatSelectorPanel;
