@@ -54,8 +54,8 @@ public class MetronomeController
     met.setTempo(tempo);
     met.addListener(this);
     this.isSubdivision = isSubdivision;
-    subdivisionOn = true;
-    subdivisionMultiplier = 3;
+    subdivisionOn = false;
+    subdivisionMultiplier = 1;
 
     clickTypes = new ArrayList<Integer>();
     setTimeSignature(TimeSignature.getDefaultTimeSignature());
@@ -64,8 +64,8 @@ public class MetronomeController
     if (!isSubdivision)
     {
       subdivisionController = new SubdivisionController();
-      subdivisionController.setDelay((int) (met.getDelay() / subdivisionMultiplier));
-      subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(3, 4));
+//      subdivisionController.setDelay((int) (met.getDelay() / subdivisionMultiplier));
+//      subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(3, 4));
     }
   }
 
@@ -246,6 +246,7 @@ public class MetronomeController
     else {
       subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(subdivision.beats, 4));
       subdivisionController.setDelay((getDelay() / subdivision.beats));
+      subdivisionOn = true;
     }
   }
 
