@@ -3,7 +3,6 @@ package main;
 import java.awt.BorderLayout;
 import java.awt.Font;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import app.JApplication;
@@ -61,9 +60,9 @@ public class MetroSteinMachine extends JApplication
 
     JTextArea title;
     
-    JButton testButton = new JButton("test");
-    testButton.addActionListener(metronomeController);
-    contentPane.add(testButton, BorderLayout.SOUTH);
+//    JButton testButton = new JButton("test");
+//    testButton.addActionListener(metronomeController);
+//    contentPane.add(testButton, BorderLayout.SOUTH);
 
     // Add the title
     title = new JTextArea("MetroStein Machine");

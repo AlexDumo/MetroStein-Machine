@@ -87,6 +87,15 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
     incrementButton.addActionListener(this);
     c.gridx = 1;
     this.add(incrementButton, c);
+    
+    // Tap tempo Button
+    tapButton = new TapTempoButton("Tap");
+    tapButton.addActionListener(this);
+    c.gridx = 0;
+    c.gridy = 4;
+    c.gridwidth = 2;
+    c.gridheight = 2;
+    this.add(tapButton, c);
   }
 
   /**
@@ -190,6 +199,7 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
     incrementButton.addActionListener(metronomeController);
     decrementButton.addActionListener(metronomeController);
     tempoInput.addFocusListener(metronomeController);
+    tapButton.addActionListener(metronomeController);
     
     metronomeController.addObserver(this);
   }

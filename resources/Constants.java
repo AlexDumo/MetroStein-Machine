@@ -15,7 +15,7 @@ public class Constants
   
   public static final String 
       INCREMENT = "+", DECREMENT = "-", 
-      START = "start", STOP = "stop",
+      START = "▶ Start", STOP = "■ Stop",
       METER_CHANGE = "meterChange",
       SUBDIVISION_CHANGE = "subChange";
   

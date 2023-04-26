@@ -86,7 +86,7 @@ public class ClickMachine
    */
   public void click(final int clickNum)
   {
-    System.out.println("Click " + clickNum);
+//    System.out.println("Click " + clickNum);
     try
     {
       if (clickNum < CLICK_MIN || clickNum > CLICK_MAX)

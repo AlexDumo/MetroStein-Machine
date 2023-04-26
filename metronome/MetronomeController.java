@@ -28,6 +28,7 @@ public class MetronomeController
     implements ActionListener, MetronomeListener, FocusListener, MetronomeSubject
 {
   private Metronome met;
+  private MetronomePreset currentPreset;
   private SubdivisionController subdivisionController;
   private double subdivisionMultiplier;
   private double tempo;
@@ -64,8 +65,8 @@ public class MetronomeController
     if (!isSubdivision)
     {
       subdivisionController = new SubdivisionController();
-//      subdivisionController.setDelay((int) (met.getDelay() / subdivisionMultiplier));
-//      subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(3, 4));
+      // subdivisionController.setDelay((int) (met.getDelay() / subdivisionMultiplier));
+      // subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(3, 4));
     }
   }
 
@@ -86,15 +87,15 @@ public class MetronomeController
    */
   public void setClickType(final int beatNumber, final int clickToUse)
   {
+    currentPreset.setClickType(beatNumber, clickToUse);
     // Invalid beat
-    if (beatNumber < 0 || beatNumber > timeSignature.getNumerator())
-      return;
-
-    if (clickToUse < ClickMachine.CLICK_MIN || clickToUse > ClickMachine.CLICK_MAX)
-      clickTypes.set(beatNumber - 1, 1); // Invalid click number
-    else
-      clickTypes.set(beatNumber - 1, clickToUse);
-
+//    if (beatNumber < 0 || beatNumber > timeSignature.getNumerator())
+//      return;
+//
+//    if (clickToUse < ClickMachine.CLICK_MIN || clickToUse > ClickMachine.CLICK_MAX)
+//      clickTypes.set(beatNumber - 1, 1); // Invalid click number
+//    else
+//      clickTypes.set(beatNumber - 1, clickToUse);
   }
 
   /**
@@ -108,9 +109,20 @@ public class MetronomeController
    */
   public void setClickTypes(final ArrayList<Integer> typeArray)
   {
-    // Loops through the map
-    for (int i = 0; i < typeArray.size(); i++)
-      setClickType(i + 1, typeArray.get(i));
+    currentPreset.setClickTypes(typeArray);
+    // Loops through the Arraylist
+    // TODO this line is bad because it modifies a parameter
+//    ArrayList<Integer> typeArrayCopy = (ArrayList<Integer>) typeArray.clone();
+//    typeArrayCopy.ensureCapacity(timeSignature.getNumerator()); // ensures array is long enough for
+//                                                            // current TimeSignature
+//    Integer cur;
+//    for (int i = 0; i < timeSignature.getNumerator(); i++)
+//    {
+//      cur = typeArrayCopy.get(i);
+//      if (cur == null)
+//        cur = ClickMachine.CLICK_DEFAULT;
+//      setClickType(i + 1, cur);
+//    }
   }
 
   /**
@@ -139,7 +151,8 @@ public class MetronomeController
   public void setTempo(double tempo)
   {
     System.out.println("Tempo " + tempo);
-    setDelay(Metronome.bpmToMilli(tempo));;
+    setDelay(Metronome.bpmToMilli(tempo));
+    ;
   }
 
   /**
@@ -191,7 +204,7 @@ public class MetronomeController
   }
 
   /**
-   * @return an int[] with the time signature numerator [0] and the denominator [1].
+   * @return the TimeSignature of the owning controller.
    */
   public TimeSignature getTimeSignature()
   {
@@ -204,7 +217,7 @@ public class MetronomeController
    * @param metronomeListener
    *          the MetronomeListener to add
    */
-  public void addMetronomeListener(MetronomeListener metronomeListener)
+  public void addMetronomeListener(final MetronomeListener metronomeListener)
   {
     if (metronomeListener != null)
       met.addListener(metronomeListener);
@@ -212,8 +225,12 @@ public class MetronomeController
 
   /**
    * Starts the metronome.
+   * 
+   * @param initialClick
+   *          true if the metronome should click on start. False if it should wait for the first
+   *          delay.
    */
-  public void start(boolean initialClick)
+  public void start(final boolean initialClick)
   {
     met.start(initialClick);
     if (subdivisionOn && !isSubdivision)
@@ -230,24 +247,46 @@ public class MetronomeController
 
     // subdivisionController.stop();
   }
-  
+
   /**
    * Sets the subdivision of the metronome controller.
    * 
    * @param subdivision
    */
-  public void setSubdivision(Subdivision subdivision)
+  public void setSubdivision(final Subdivision subdivision)
   {
     subdivisionController.stop();
     subdivisionMultiplier = subdivision.beats;
-    
-    if(subdivisionMultiplier == 1)
+
+    if (subdivisionMultiplier == 1)
       subdivisionOn = false;
-    else {
+    else
+    {
       subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(subdivision.beats, 4));
       subdivisionController.setDelay((getDelay() / subdivision.beats));
       subdivisionOn = true;
     }
+    
+    // TODO maybe this should start again?
+  }
+
+  /**
+   * Sets all the attributes of the owning MetronomeController based on the attributes of the given
+   * MetronomePreset.
+   * 
+   * @param metronomePreset
+   */
+  public void setFromMetronomePreset(final MetronomePreset metronomePreset)
+  {
+    if(metronomePreset == null)
+      return;
+    
+    stop(); // Stop the metronome
+
+    setTempo(tempo);
+    setTimeSignature(metronomePreset.getTimeSignature());
+    setSubdivision(metronomePreset.getSubdivision());
+    setClickTypes(clickTypes);
   }
 
   // ---------- Override Methods ----------
@@ -299,7 +338,7 @@ public class MetronomeController
         setClickType(Integer.parseInt(acArgs.get(1)), Integer.parseInt(acArgs.get(2)));
         break;
       case Constants.SUBDIVISION_CHANGE:
-        setSubdivision((Subdivision)((JComboBox<Subdivision>) e.getSource()).getSelectedItem());
+        setSubdivision((Subdivision) ((JComboBox<Subdivision>) e.getSource()).getSelectedItem());
         break;
       case "test":
         break;
