@@ -24,17 +24,13 @@ import resources.Constants;
  *         This class controls the ClickMachines by telling which one to activate and when. It has
  *         four types of clicks at its disposal.
  */
-public class MetronomeController
+public class MetronomeController extends MetronomePreset
     implements ActionListener, MetronomeListener, FocusListener, MetronomeSubject
 {
   private Metronome met;
-  private MetronomePreset currentPreset;
   private SubdivisionController subdivisionController;
   private double subdivisionMultiplier;
-  private double tempo;
   protected ClickMachine clicker;
-  protected TimeSignature timeSignature;
-  protected ArrayList<Integer> clickTypes;
   protected int currentBeat;
 
   private boolean isSubdivision, subdivisionOn;
@@ -47,19 +43,17 @@ public class MetronomeController
    */
   public MetronomeController(boolean isSubdivision)
   {
+    super();
     metronomeObservers = new HashSet<>();
     frequentObservers = new HashSet<>();
-    tempo = Constants.DEFAULT_TEMPO;
     clicker = new ClickMachine();
     met = new metronome.Metronome();
-    met.setTempo(tempo);
+    met.setTempo(getTempo());
     met.addListener(this);
     this.isSubdivision = isSubdivision;
     subdivisionOn = false;
     subdivisionMultiplier = 1;
 
-    clickTypes = new ArrayList<Integer>();
-    setTimeSignature(TimeSignature.getDefaultTimeSignature());
     currentBeat = 1;
 
     if (!isSubdivision)
@@ -73,65 +67,6 @@ public class MetronomeController
   public MetronomeController()
   {
     this(false);
-  }
-
-  /**
-   * Sets the click emphasis on a given beat. Beats cannot have more than one click type, so if it
-   * already has a click type, it will overwrite it. If there is an invalid input, it will reset to
-   * the default click (1).
-   * 
-   * @param beatNumber
-   *          The beat to change the click emphasis on. Invalid numbers are ignored
-   * @param clickToUse
-   *          The click to use [-1 - 3] on the beat where -1 is silence. Default click is 1.
-   */
-  public void setClickType(final int beatNumber, final int clickToUse)
-  {
-    currentPreset.setClickType(beatNumber, clickToUse);
-    // Invalid beat
-//    if (beatNumber < 0 || beatNumber > timeSignature.getNumerator())
-//      return;
-//
-//    if (clickToUse < ClickMachine.CLICK_MIN || clickToUse > ClickMachine.CLICK_MAX)
-//      clickTypes.set(beatNumber - 1, 1); // Invalid click number
-//    else
-//      clickTypes.set(beatNumber - 1, clickToUse);
-  }
-
-  /**
-   * Sets the click emphasis on a given beat. Beats cannot have more than one click type, so if it
-   * already has a click type, it will overwrite it. If there is an invalid input, it will reset to
-   * the default click (1).
-   * 
-   * @param typeArray
-   *          The ArrayList<Integer> of the instructions. Invalid beat numbers are ignored. Invalid
-   *          click types are set to the default.
-   */
-  public void setClickTypes(final ArrayList<Integer> typeArray)
-  {
-    currentPreset.setClickTypes(typeArray);
-    // Loops through the Arraylist
-    // TODO this line is bad because it modifies a parameter
-//    ArrayList<Integer> typeArrayCopy = (ArrayList<Integer>) typeArray.clone();
-//    typeArrayCopy.ensureCapacity(timeSignature.getNumerator()); // ensures array is long enough for
-//                                                            // current TimeSignature
-//    Integer cur;
-//    for (int i = 0; i < timeSignature.getNumerator(); i++)
-//    {
-//      cur = typeArrayCopy.get(i);
-//      if (cur == null)
-//        cur = ClickMachine.CLICK_DEFAULT;
-//      setClickType(i + 1, cur);
-//    }
-  }
-
-  /**
-   * @return The array of click types for each beat. Note that the beat numbers start at 1 but the
-   *         indexes still start at 0.
-   */
-  public ArrayList<Integer> getClickTypes()
-  {
-    return clickTypes;
   }
 
   /**
@@ -150,17 +85,9 @@ public class MetronomeController
    */
   public void setTempo(double tempo)
   {
+    super.setTempo(tempo);
     System.out.println("Tempo " + tempo);
     setDelay(Metronome.bpmToMilli(tempo));
-    ;
-  }
-
-  /**
-   * @return the tempo
-   */
-  public double getTempo()
-  {
-    return tempo;
   }
 
   /**
@@ -171,8 +98,8 @@ public class MetronomeController
    */
   public void setDelay(int delay)
   {
-    System.out.printf("Old delay %d, New Delay: %d\n", Metronome.bpmToMilli(tempo), delay);
-    this.tempo = Metronome.milliToBpm(delay);
+    System.out.printf("Old delay %d, New Delay: %d\n", Metronome.bpmToMilli(getTempo()), delay);
+    super.setTempo(Metronome.milliToBpm(delay));
     met.setDelay(delay);
     if (subdivisionController != null)
       subdivisionController.setDelay((int) (getDelay() / subdivisionMultiplier));
@@ -184,31 +111,6 @@ public class MetronomeController
   public int getDelay()
   {
     return met.getDelay();
-  }
-
-  /**
-   * Sets the time signature. Must be a supported time signature, otherwise 4/4.
-   * 
-   * @param timeSignature
-   *          the timeSignature to set
-   */
-  public void setTimeSignature(final TimeSignature timeSignature)
-  {
-    clickTypes.clear();
-    clickTypes.ensureCapacity(timeSignature.getNumerator());
-
-    for (int i = 0; i < timeSignature.getNumerator(); i++)
-      clickTypes.add(i, Constants.DEFAULT_CLICK);
-    clickTypes.set(0, 0);
-    this.timeSignature = timeSignature;
-  }
-
-  /**
-   * @return the TimeSignature of the owning controller.
-   */
-  public TimeSignature getTimeSignature()
-  {
-    return timeSignature;
   }
 
   /**
@@ -232,9 +134,9 @@ public class MetronomeController
    */
   public void start(final boolean initialClick)
   {
-    met.start(initialClick);
-    if (subdivisionOn && !isSubdivision)
+    if (!isSubdivision && subdivisionOn)
       subdivisionController.start(true);
+    met.start(initialClick);
   }
 
   /**
@@ -244,8 +146,6 @@ public class MetronomeController
   {
     met.stop();
     currentBeat = 1;
-
-    // subdivisionController.stop();
   }
 
   /**
@@ -283,10 +183,10 @@ public class MetronomeController
     
     stop(); // Stop the metronome
 
-    setTempo(tempo);
+//    setTempo(tempo);
     setTimeSignature(metronomePreset.getTimeSignature());
     setSubdivision(metronomePreset.getSubdivision());
-    setClickTypes(clickTypes);
+//    setClickTypes(clickTypes);
   }
 
   // ---------- Override Methods ----------
@@ -325,10 +225,10 @@ public class MetronomeController
         stop();
         break;
       case Constants.INCREMENT:
-        setTempo(tempo + 1);
+        setTempo(getTempo() + 1);
         break;
       case Constants.DECREMENT:
-        setTempo(tempo - 1);
+        setTempo(getTempo() - 1);
         break;
       case Constants.METER_CHANGE:
         setTimeSignature(
@@ -357,11 +257,11 @@ public class MetronomeController
     if (subdivisionOn)
       subdivisionController.start(false);
     // Reset to the start of the measure
-    if (currentBeat > timeSignature.getNumerator())
+    if (currentBeat > getTimeSignature().getNumerator())
       currentBeat = 1;
 
     // System.out.println("current beat " + currentBeat);
-    clicker.click(clickTypes.get(currentBeat - 1));
+    clicker.click(getClickTypes().get(currentBeat - 1));
 
     notifyFrequentObservers();
     currentBeat++;

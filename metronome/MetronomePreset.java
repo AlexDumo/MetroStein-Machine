@@ -90,11 +90,19 @@ public class MetronomePreset
   }
 
   /**
+   * Sets the time signature and changes clicks to default.
+   * 
    * @param timeSignature
    *          the timeSignature to set
    */
   public void setTimeSignature(final TimeSignature timeSignature)
   {
+    clickTypes.clear();
+    clickTypes.ensureCapacity(timeSignature.getNumerator());
+
+    for (int i = 0; i < timeSignature.getNumerator(); i++)
+      clickTypes.add(i, Constants.DEFAULT_CLICK);
+    clickTypes.set(0, 0);
     this.timeSignature = timeSignature;
   }
 
@@ -126,7 +134,6 @@ public class MetronomePreset
       clickTypes.set(beatNumber - 1, 1); // Invalid click number
     else
       clickTypes.set(beatNumber - 1, clickToUse);
-
   }
 
   /**
@@ -162,7 +169,7 @@ public class MetronomePreset
     clickTypes.clear();
     clickTypes.ensureCapacity(timeSignature.getNumerator());
     for (int i = 0; i < timeSignature.getNumerator(); i++)
-      clickTypes.set(i, ClickMachine.CLICK_DEFAULT);
+      clickTypes.add(ClickMachine.CLICK_DEFAULT);
 
     clickTypes.set(0, ClickMachine.CLICK_ACCENT);
   }
