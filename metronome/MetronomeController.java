@@ -33,7 +33,7 @@ public class MetronomeController extends MetronomePreset
   protected ClickMachine clicker;
   protected int currentBeat;
 
-  private boolean isSubdivision, subdivisionOn;
+  private boolean isSubdivision, subdivisionOn, isRunning;
 
   private Set<MetronomeObserver> metronomeObservers;
   private Set<FrequentMetronomeObserver> frequentObservers;
@@ -85,7 +85,6 @@ public class MetronomeController extends MetronomePreset
    */
   public void setTempo(double tempo)
   {
-    super.setTempo(tempo);
     System.out.println("Tempo " + tempo);
     setDelay(Metronome.bpmToMilli(tempo));
   }
@@ -137,6 +136,7 @@ public class MetronomeController extends MetronomePreset
     if (!isSubdivision && subdivisionOn)
       subdivisionController.start(true);
     met.start(initialClick);
+    isRunning = true;
   }
 
   /**
@@ -146,6 +146,18 @@ public class MetronomeController extends MetronomePreset
   {
     met.stop();
     currentBeat = 1;
+    isRunning = false;
+    
+    notifyFrequentObservers(); // make sure that all they know the met is off.
+  }
+  
+  /**
+   * Returns true if the controller is running, false if not.
+   * 
+   * @return
+   */
+  public boolean isRunning() {
+    return isRunning;
   }
 
   /**
@@ -215,13 +227,16 @@ public class MetronomeController extends MetronomePreset
       System.out.println(acArgs);
     }
 
+    boolean notify = true;
     // Starts, and increments the metronome
     switch (acString)
     {
       case Constants.START:
+        notify = false;
         start(true);
         break;
       case Constants.STOP:
+        notify = false;
         stop();
         break;
       case Constants.INCREMENT:
@@ -240,6 +255,9 @@ public class MetronomeController extends MetronomePreset
       case Constants.SUBDIVISION_CHANGE:
         setSubdivision((Subdivision) ((JComboBox<Subdivision>) e.getSource()).getSelectedItem());
         break;
+      case Constants.TEMPO_CHANGE:
+        setTempo(Double.parseDouble(acArgs.get(1)));
+        break;
       case "test":
         break;
       default:
@@ -247,7 +265,8 @@ public class MetronomeController extends MetronomePreset
         break;
     }
 
-    notifyObservers();
+    if(notify)
+      notifyObservers();
   }
 
   // Overrides the click
@@ -273,6 +292,7 @@ public class MetronomeController extends MetronomePreset
   @Override
   public void focusGained(final FocusEvent e)
   {
+    // Does nothing
   }
 
   /**

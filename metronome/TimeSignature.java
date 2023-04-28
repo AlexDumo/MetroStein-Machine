@@ -25,7 +25,17 @@ public class TimeSignature
       new TimeSignature(13, 4),
       new TimeSignature(14, 4),
       new TimeSignature(15, 4),
-      new TimeSignature(16, 4)
+      new TimeSignature(16, 4),
+      new TimeSignature(3, 8),
+      new TimeSignature(4, 8),
+      new TimeSignature(5, 8),
+      new TimeSignature(6, 8),
+      new TimeSignature(7, 8),
+      new TimeSignature(8, 8),
+      new TimeSignature(9, 8),
+      new TimeSignature(10, 8),
+      new TimeSignature(11, 8),
+      new TimeSignature(12, 8)
   };
   private static final int DEFAULT_TIME_SIGNATURE_INDEX = 3;
   
@@ -81,29 +91,11 @@ public class TimeSignature
   }
 
   /**
-   * @param numerator
-   *          the numerator to set
-   */
-  public void setNumerator(int numerator)
-  {
-    this.numerator = numerator;
-  }
-
-  /**
    * @return the denominator
    */
   public int getDenominator()
   {
     return denominator;
-  }
-
-  /**
-   * @param denominator
-   *          the denominator to set
-   */
-  public void setDenominator(int denominator)
-  {
-    this.denominator = denominator;
   }
 
   @Override

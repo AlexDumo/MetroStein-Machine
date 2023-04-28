@@ -244,8 +244,6 @@ public class BeatSelector extends JButton implements ActionListener
   public void actionPerformed(final ActionEvent e)
   {
     CycleState(true);
-    // toggleActive();
-    // this.se
   }
 
 }

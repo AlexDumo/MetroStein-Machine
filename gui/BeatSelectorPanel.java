@@ -48,7 +48,7 @@ public class BeatSelectorPanel extends JPanel
    */
   protected void updateBeatSelectors(TimeSignature newTimeSignature, ArrayList<Integer> beatTypes)
   {
-//    System.out.println("Updating beat selectors " + newTimeSignature.toString());
+    // System.out.println("Updating beat selectors " + newTimeSignature.toString());
     beatSelectors.clear();
     this.removeAll();
     this.revalidate();
@@ -107,7 +107,7 @@ public class BeatSelectorPanel extends JPanel
   @Override
   public void actionPerformed(ActionEvent e)
   {
-//    System.out.printf("action performed %s\n", e.getActionCommand());
+    // System.out.printf("action performed %s\n", e.getActionCommand());
     // TODO Auto-generated method stub
 
   }
@@ -126,12 +126,20 @@ public class BeatSelectorPanel extends JPanel
   public void frequentUpdate(MetronomeSubject metronomeSubject)
   {
     MetronomeController metronomeController = (MetronomeController) metronomeSubject;
-    int currentBeat = metronomeController.getCurrentBeat();
-//     System.out.printf("Frequent update %d\n", currentBeat);
-    beatSelectors.get(currentBeat - 1).setActive();
-    // Sets the previous beat inactive.
-    beatSelectors.get((currentBeat + metronomeController.getTimeSignature().getNumerator() - 2)
-        % metronomeController.getTimeSignature().getNumerator()).setInactive();
+
+    if (metronomeController.isRunning()) // Sets the current beatSelector active and turns off the
+                                         // previous one
+    {
+      int currentBeat = metronomeController.getCurrentBeat();
+      beatSelectors.get(currentBeat - 1).setActive();
+      beatSelectors.get((currentBeat + metronomeController.getTimeSignature().getNumerator() - 2)
+          % metronomeController.getTimeSignature().getNumerator()).setInactive();
+    }
+    else // Sets all the selectors to inactive if it is off.
+    {
+      for (BeatSelector cur : beatSelectors)
+        cur.setInactive();
+    }
   }
 
 }

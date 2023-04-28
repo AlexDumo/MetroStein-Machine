@@ -1,13 +1,17 @@
 package gui;
 
+import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.JButton;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 
 import metronome.MetronomeController;
+import metronome.MetronomeObserver;
+import metronome.MetronomeSubject;
 import resources.Constants;
 
 /**
@@ -16,8 +20,11 @@ import resources.Constants;
  *         This work complies with the JMU Honor Code.
  */
 @SuppressWarnings("serial")
-public class LeftPanel extends MetronomePanel
+public class LeftPanel extends MetronomePanel implements MetronomeObserver
 {
+  private double tempo;
+  JTextArea dqnText, eigthText, halfText;
+  
   /**
    * Default constructor.
    */
@@ -25,8 +32,8 @@ public class LeftPanel extends MetronomePanel
   {
     super(new GridBagLayout());
     this.setPreferredSize(new Dimension(Constants.WIDTH / 3, Constants.HEIGHT - 30));
-
-    JSlider accentSlider, eigthSlider, sixteenthSlider, tripletSlider;
+    
+    JButton dqnButton, eigthButton, halfButton;
 
     GridBagConstraints c = new GridBagConstraints();
 
@@ -36,38 +43,59 @@ public class LeftPanel extends MetronomePanel
     c.ipadx = 10;
     c.ipady = 10;
     c.fill = GridBagConstraints.HORIZONTAL;
-    this.add(new JTextArea("AC"), c);
+    eigthButton = new JButton("Eigth");
+    this.add(eigthButton, c);
 
     c.gridy = 1;
     c.ipadx = 10;
-    this.add(new JTextArea("8th"), c);
+    dqnButton = new JButton("dqn");
+    this.add(dqnButton, c);
 
     c.gridy = 2;
     c.ipadx = 10;
-    this.add(new JTextArea("trip"), c);
+    halfButton = new JButton("half");
+    this.add(halfButton, c);
 
-    c.gridy = 3;
-    c.ipadx = 10;
-    this.add(new JTextArea("16th"), c);
+//    c.gridy = 3;
+//    c.ipadx = 10;
+//    this.add(new JTextArea("16th"), c);
 
     c.gridx = 1;
     c.gridy = 0;
     c.gridwidth = 4;
-    accentSlider = new JSlider(0, 127, 0);
-    accentSlider.setBounds(0, 0, 50, 0);
-    this.add(accentSlider, c);
+//    accentSlider = new JSlider(0, 127, 0);
+//    accentSlider.setBounds(0, 0, 50, 0);
+    eigthText = new JTextArea("");
+    this.add(eigthText, c);
 
     c.gridy = 1;
-    eigthSlider = new JSlider(0, 127, 0);
-    this.add(eigthSlider, c);
+//    eigthSlider = new JSlider(0, 127, 0);
+    dqnText = new JTextArea("");
+    this.add(dqnText, c);
 
     c.gridy = 2;
-    tripletSlider = new JSlider(0, 127, 0);
-    this.add(tripletSlider, c);
+//    tripletSlider = new JSlider(0, 127, 0);
+    halfText = new JTextArea("");
+    this.add(halfText, c);
+    
+    setTempo(Constants.DEFAULT_TEMPO);
 
-    c.gridy = 3;
-    sixteenthSlider = new JSlider(0, 127, 0);
-    this.add(sixteenthSlider, c);
+//    c.gridy = 3;
+//    sixteenthSlider = new JSlider(0, 127, 0);
+//    this.add(sixteenthSlider, c);
+  }
+  
+  /**
+   * Sets the text in the tempo switch buttons.
+   * 
+   * @param tempo
+   */
+  public void setTempo(final double tempo)
+  {    
+    eigthText.setText(Double.toString(tempo * 2));
+    dqnText.setText(Double.toString(tempo / 1.5));
+    halfText.setText(Double.toString(tempo / 2));
+    
   }
 
   /**
@@ -86,6 +114,12 @@ public class LeftPanel extends MetronomePanel
   @Override
   public void setMetronomeListeners(MetronomeController metronomeController)
   {
+  }
+
+  @Override
+  public void update(MetronomeSubject metronomeSubject)
+  {
+    tempo = ((MetronomeController) metronomeSubject).getTempo();
   }
 
 }

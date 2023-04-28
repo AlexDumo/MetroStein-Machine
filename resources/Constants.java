@@ -17,7 +17,8 @@ public class Constants
       INCREMENT = "+", DECREMENT = "-", 
       START = "▶ Start", STOP = "■ Stop",
       METER_CHANGE = "meterChange",
-      SUBDIVISION_CHANGE = "subChange";
+      SUBDIVISION_CHANGE = "subChange",
+      TEMPO_CHANGE = "tempo";
   
   
 

@@ -10,7 +10,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
-
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 
@@ -131,10 +130,11 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
    * 
    * @param newTemo
    */
-  private void setTempo(double newTemo)
+  private void setTempo(final double newTemo)
   {
+    tempo = newTemo;
     DecimalFormat df = new DecimalFormat("#.##");
-    tempoInput.setText(df.format(tempo));
+    tempoInput.setText(df.format(newTemo));
   }
 
   @Override

@@ -17,18 +17,29 @@ import javax.swing.Timer;
  */
 public class Metronome
 {
-  private int delay; // milliseconds between clicks
+  private int delay;
   private volatile boolean running;
-  private Timer timer; // swing timer object
-  private ActionListener listener; // action listener for the timer
+  private Timer timer;
+  private ActionListener listener;
   private ArrayList<MetronomeListener> listeners;
   private MetronomeTickDispatcher dispatcher;
-  private MetronomeListener[] copy; // listener for beat events
+  private MetronomeListener[] copy;
 
-  // constructor to set up the metronome
-  public Metronome(int delay)
+  private static final int DEFAULT_DELAY = 500;
+
+  /**
+   * constructor to set up the metronome with given delay.
+   * 
+   * @param delay
+   *          The delay in milliseconds to use. 500 if < 1.
+   */
+  public Metronome(final int delay)
   {
-    this.delay = delay;
+    if (delay < 1) // Set to default tempo if invalid.
+      this.delay = DEFAULT_DELAY;
+    else
+      this.delay = delay;
+
     running = false;
     dispatcher = new MetronomeTickDispatcher();
     listeners = new ArrayList<MetronomeListener>();
@@ -44,13 +55,13 @@ public class Metronome
 
     timer = new Timer(delay, listener);
   }
-  
+
   /**
    * Default constructor with a 500ms delay.
    */
   public Metronome()
   {
-    this(500);
+    this(DEFAULT_DELAY);
   }
 
   /**
@@ -59,7 +70,7 @@ public class Metronome
    * @param click
    *          true if the Metronome should send a click on start.
    */
-  public void start(boolean click)
+  public void start(final boolean click)
   {
     if (click)
       notifyListeners();
@@ -86,15 +97,19 @@ public class Metronome
   }
 
   /**
-   * Sets the millisecond delay of this Metronome. Can be used while running
+   * Sets the millisecond delay of this Metronome. Can be used while running. Ignores any values <
+   * 1.
    * 
    * @param newDelay
    */
   public void setDelay(final int newDelay)
   {
+    if (newDelay < 1)
+      return;
+
     boolean wasRunning = running;
     stop();
-    
+
     delay = newDelay;
 
     timer = new Timer(newDelay, listener);
@@ -113,7 +128,8 @@ public class Metronome
 
   /**
    * Sets the Metronome's tempo to the given bpm (beats per minute). Only accurate to the
-   * millisecond. Can be used while the metronome is running.
+   * millisecond. Can be used while the metronome is running. Ignores values that will evaluate to <
+   * 1ms.
    * 
    * @param bpm
    *          The bpm to use. Only accurate to the millisecond (rounds down).
@@ -190,9 +206,9 @@ public class Metronome
    * 
    * @return The milliseconds per click.
    */
-  protected static int bpmToMilli(double bpm)
+  public static int bpmToMilli(final double bpm)
   {
-    return (int) (60000 / bpm);
+    return (int) (60000.0 / bpm);
   }
 
   /*
@@ -202,7 +218,7 @@ public class Metronome
    * 
    * @return The bpm
    */
-  protected static double milliToBpm(int milli)
+  public static double milliToBpm(final int milli)
   {
     return 60000.0 / milli;
   }
