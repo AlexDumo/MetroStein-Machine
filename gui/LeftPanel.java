@@ -3,6 +3,7 @@ package gui;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.text.DecimalFormat;
 
 import javax.swing.JButton;
 import javax.swing.JTextArea;
@@ -20,8 +21,8 @@ import resources.Constants;
 @SuppressWarnings("serial")
 public class LeftPanel extends MetronomePanel implements MetronomeObserver
 {
-  private double tempo;
   private JTextArea dqnText, eigthText, halfText;
+  private JButton dqnButton, eigthButton, halfButton;
 
   /**
    * Default constructor.
@@ -30,8 +31,6 @@ public class LeftPanel extends MetronomePanel implements MetronomeObserver
   {
     super(new GridBagLayout());
     this.setPreferredSize(new Dimension(Constants.WIDTH / 3, Constants.HEIGHT - 30));
-
-    JButton dqnButton, eigthButton, halfButton;
 
     GridBagConstraints c = new GridBagConstraints();
 
@@ -99,25 +98,43 @@ public class LeftPanel extends MetronomePanel implements MetronomeObserver
   /**
    * Sets the text in the tempo switch buttons.
    * 
-   * @param tempo
+   * @param newTempo
    */
-  public void setTempo(final double tempo)
+  public void setTempo(final double newTempo)
   {
-    eigthText.setText(Double.toString(tempo * 2));
-    dqnText.setText(Double.toString(tempo / 1.5));
-    halfText.setText(Double.toString(tempo / 2));
+    DecimalFormat df = new DecimalFormat("#.##");
+    String cmdFormat = "%s%c%s%c", tempoCmd = Constants.TEMPO_CHANGE;
+    char del = Constants.DELIMITER;
+    double multTempo;
+
+    multTempo = newTempo * 2;
+    eigthText.setText(df.format(multTempo));
+    eigthButton.setActionCommand(String.format(cmdFormat, tempoCmd, del, multTempo, del));
+
+    multTempo = newTempo / 1.5;
+    dqnText.setText(df.format(multTempo));
+    dqnButton.setActionCommand(String.format(cmdFormat, tempoCmd, del, multTempo, del));
+
+    multTempo = newTempo / 2;
+    halfText.setText(df.format(multTempo));
+    halfButton.setActionCommand(String.format(cmdFormat, tempoCmd, del, multTempo, del));
 
   }
 
   @Override
   public void setMetronomeListeners(final MetronomeController metronomeController)
   {
+    dqnButton.addActionListener(metronomeController);
+    eigthButton.addActionListener(metronomeController);
+    halfButton.addActionListener(metronomeController);
+
+    metronomeController.addObserver(this);
   }
 
   @Override
   public void update(final MetronomeSubject metronomeSubject)
   {
-    tempo = ((MetronomeController) metronomeSubject).getTempo();
+    setTempo(((MetronomeController) metronomeSubject).getTempo());
   }
 
 }

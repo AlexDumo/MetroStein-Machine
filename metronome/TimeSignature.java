@@ -83,6 +83,9 @@ public class TimeSignature
     return denominator;
   }
 
+  /**
+   * @return "{numerator}/{denominator}"
+   */
   @Override
   public String toString()
   {

@@ -92,11 +92,14 @@ public class MetronomeController extends MetronomePreset
   public void setTempo(final double tempo)
   {
     System.out.println("Tempo " + tempo);
-    setDelay(Metronome.bpmToMilli(tempo));
+    super.setTempo(tempo);
+    met.setTempo(tempo);
+    if (subdivisionController != null)
+      subdivisionController.setTempo(getTempo() / subdivisionMultiplier);
   }
 
   /**
-   * Currently only works when the metronome is off.
+   * A more precise way to change the tempo. Specify millisecond delay.
    * 
    * @param delay
    *          the delay to set
@@ -286,7 +289,6 @@ public class MetronomeController extends MetronomePreset
     if (currentBeat > getTimeSignature().getNumerator())
       currentBeat = 1;
 
-    // System.out.println("current beat " + currentBeat);
     clicker.click(getClickTypes().get(currentBeat - 1));
 
     notifyFrequentObservers();
@@ -316,13 +318,14 @@ public class MetronomeController extends MetronomePreset
       else if (newTempo > Constants.MAX_TEMPO)
         newTempo = Constants.MAX_TEMPO;
       setTempo(newTempo);
+      notifyObservers();
     }
     catch (NumberFormatException exception)
     {
     }
   }
 
-  // ---------- Static Methods ----------
+  // ---------- Observer Methods ----------
 
   @Override
   public void addObserver(final MetronomeObserver observer)

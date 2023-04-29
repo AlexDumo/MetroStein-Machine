@@ -151,14 +151,14 @@ public class MiddlePanel extends MetronomePanel
         startButton.setActionCommand(Constants.START);
         startButton.setText(Constants.START);
         break;
-      case Constants.INCREMENT:
-        tempo = (int) (tempo + 1);
-        setTempo((double) tempo);
-        break;
-      case Constants.DECREMENT:
-        tempo = (int) (tempo - 1);
-        setTempo((double) tempo);
-        break;
+//      case Constants.INCREMENT:
+//        tempo = (int) (tempo + 1);
+//        setTempo((double) tempo);
+//        break;
+//      case Constants.DECREMENT:
+//        tempo = (int) (tempo - 1);
+//        setTempo((double) tempo);
+//        break;
       default:
         break;
 
