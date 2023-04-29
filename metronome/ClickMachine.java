@@ -1,42 +1,41 @@
 package metronome;
 
-/**
- * @author Alexander Dumouchelle
- *
- * This work complies with the JMU Honor Code.
- * 
- * All this class does is click.
- */
+import java.io.IOException;
 
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import auditory.sampled.BoomBox;
 import auditory.sampled.BufferedSound;
 import auditory.sampled.BufferedSoundFactory;
 import io.ResourceFinder;
 
+/**
+ * @author Alexander Dumouchelle
+ *
+ *         This work complies with the JMU Honor Code.
+ * 
+ *         All this class does is click.
+ */
 public class ClickMachine
 {
   public static final int CLICK_MIN = -1, CLICK_MAX = 3, CLICK_DEFAULT = 1, CLICK_OFF = -1,
       CLICK_ACCENT = 0, CLICK_SECONDARY_ACCENT = 2, CLICK_SUBDIVISION = 3;
-  public static final String[] clickerNames = {"0.wav", "1.wav", "2.wav", "3.wav"};
+  public static final String[] CLICKER_NAMES = {"0.wav", "1.wav", "2.wav", "3.wav"};
 
   private BoomBox[] boomboxes;
   private BufferedSound[] clickSounds;
 
   /**
    * Default constructor.
-   * 
-   * @param fileName
-   *          the audio file to use.
    */
   public ClickMachine()
   {
-    clickSounds = new BufferedSound[clickerNames.length];
-    boomboxes = new BoomBox[clickerNames.length];
-    for (int i = 0; i < clickerNames.length; i++)
+    clickSounds = new BufferedSound[CLICKER_NAMES.length];
+    boomboxes = new BoomBox[CLICKER_NAMES.length];
+    for (int i = 0; i < CLICKER_NAMES.length; i++)
     {
-      clickSounds[i] = loadSound(clickerNames[i]);
+      clickSounds[i] = loadSound(CLICKER_NAMES[i]);
       boomboxes[i] = new BoomBox(clickSounds[i]);
     }
   }
@@ -52,7 +51,7 @@ public class ClickMachine
    * @throws Exception
    *           The file couldn't be found in the resources package.
    */
-  protected static BufferedSound loadSound(String filename)
+  protected static BufferedSound loadSound(final String filename)
   {
     BufferedSound sound = null;
     BufferedSoundFactory factory;
@@ -65,7 +64,7 @@ public class ClickMachine
     {
       sound = factory.createBufferedSound(filename);
     }
-    catch (Exception e)
+    catch (final IOException e)
     {
       System.out.println("File not found!");
       sound = factory.createBufferedSound(200, // frequency
@@ -73,6 +72,10 @@ public class ClickMachine
           4000.0f, // sampling rate
           1000.0f // amplitude
       );
+    }
+    catch (UnsupportedAudioFileException e)
+    {
+      e.printStackTrace();
     }
 
     return sound;
@@ -86,16 +89,16 @@ public class ClickMachine
    */
   public void click(final int clickNum)
   {
-//    System.out.println("Click " + clickNum);
+    // System.out.println("Click " + clickNum);
     try
     {
       if (clickNum < CLICK_MIN || clickNum > CLICK_MAX)
         boomboxes[CLICK_DEFAULT].start(false);
-      else if (clickNum == -1)
+      else if (clickNum != -1)
       {
-      }
-      else
         boomboxes[clickNum].start(false);
+      }
+        
     }
     catch (LineUnavailableException e)
     {

@@ -27,11 +27,11 @@ import resources.Constants;
 public class MetronomeController extends MetronomePreset
     implements ActionListener, MetronomeListener, FocusListener, MetronomeSubject
 {
+  protected ClickMachine clicker;
+  protected int currentBeat;
   private Metronome met;
   private SubdivisionController subdivisionController;
   private double subdivisionMultiplier;
-  protected ClickMachine clicker;
-  protected int currentBeat;
 
   private boolean isSubdivision, subdivisionOn, isRunning;
 
@@ -40,8 +40,11 @@ public class MetronomeController extends MetronomePreset
 
   /**
    * Default constructor. Sets tempo to 120bpm and time signature to 4/4.
+   * 
+   * @param isSubdivision
+   *          true is this is a SubdivisionController. Kind of a messy solution.
    */
-  public MetronomeController(boolean isSubdivision)
+  public MetronomeController(final boolean isSubdivision)
   {
     super();
     metronomeObservers = new HashSet<>();
@@ -64,6 +67,9 @@ public class MetronomeController extends MetronomePreset
     }
   }
 
+  /**
+   * Default constructor. Not a subdivision.
+   */
   public MetronomeController()
   {
     this(false);
@@ -83,7 +89,7 @@ public class MetronomeController extends MetronomePreset
    * @param tempo
    *          the tempo to set
    */
-  public void setTempo(double tempo)
+  public void setTempo(final double tempo)
   {
     System.out.println("Tempo " + tempo);
     setDelay(Metronome.bpmToMilli(tempo));
@@ -92,10 +98,10 @@ public class MetronomeController extends MetronomePreset
   /**
    * Currently only works when the metronome is off.
    * 
-   * @param tempo
-   *          the tempo to set
+   * @param delay
+   *          the delay to set
    */
-  public void setDelay(int delay)
+  public void setDelay(final int delay)
   {
     System.out.printf("Old delay %d, New Delay: %d\n", Metronome.bpmToMilli(getTempo()), delay);
     super.setTempo(Metronome.milliToBpm(delay));
@@ -147,16 +153,17 @@ public class MetronomeController extends MetronomePreset
     met.stop();
     currentBeat = 1;
     isRunning = false;
-    
+
     notifyFrequentObservers(); // make sure that all they know the met is off.
   }
-  
+
   /**
    * Returns true if the controller is running, false if not.
    * 
-   * @return
+   * @return true if running, false if not.
    */
-  public boolean isRunning() {
+  public boolean isRunning()
+  {
     return isRunning;
   }
 
@@ -168,17 +175,18 @@ public class MetronomeController extends MetronomePreset
   public void setSubdivision(final Subdivision subdivision)
   {
     subdivisionController.stop();
-    subdivisionMultiplier = subdivision.beats;
+    subdivisionMultiplier = subdivision.getBeats();
 
     if (subdivisionMultiplier == 1)
       subdivisionOn = false;
     else
     {
-      subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(subdivision.beats, 4));
-      subdivisionController.setDelay((getDelay() / subdivision.beats));
+      subdivisionController
+          .setTimeSignature(TimeSignature.getTimeSignature(subdivision.getBeats(), 4));
+      subdivisionController.setDelay((getDelay() / subdivision.getBeats()));
       subdivisionOn = true;
     }
-    
+
     // TODO maybe this should start again?
   }
 
@@ -190,15 +198,15 @@ public class MetronomeController extends MetronomePreset
    */
   public void setFromMetronomePreset(final MetronomePreset metronomePreset)
   {
-    if(metronomePreset == null)
+    if (metronomePreset == null)
       return;
-    
+
     stop(); // Stop the metronome
 
-//    setTempo(tempo);
+    // setTempo(tempo);
     setTimeSignature(metronomePreset.getTimeSignature());
     setSubdivision(metronomePreset.getSubdivision());
-//    setClickTypes(clickTypes);
+    // setClickTypes(clickTypes);
   }
 
   // ---------- Override Methods ----------
@@ -208,7 +216,7 @@ public class MetronomeController extends MetronomePreset
    */
   @SuppressWarnings("unchecked")
   @Override
-  public void actionPerformed(ActionEvent e)
+  public void actionPerformed(final ActionEvent e)
   {
     String acString = e.getActionCommand();
     List<String> acArgs = new ArrayList<>();
@@ -265,13 +273,12 @@ public class MetronomeController extends MetronomePreset
         break;
     }
 
-    if(notify)
+    if (notify)
       notifyObservers();
   }
 
-  // Overrides the click
   @Override
-  public void handleTick(int millis)
+  public void handleTick(final int millis)
   {
     if (subdivisionOn)
       subdivisionController.start(false);
@@ -318,13 +325,13 @@ public class MetronomeController extends MetronomePreset
   // ---------- Static Methods ----------
 
   @Override
-  public void addObserver(MetronomeObserver observer)
+  public void addObserver(final MetronomeObserver observer)
   {
     metronomeObservers.add(observer);
   }
 
   @Override
-  public void removeObserver(MetronomeObserver observer)
+  public void removeObserver(final MetronomeObserver observer)
   {
     metronomeObservers.remove(observer);
   }
@@ -337,7 +344,7 @@ public class MetronomeController extends MetronomePreset
   }
 
   @Override
-  public void addFrequentObserver(FrequentMetronomeObserver frequentObserver)
+  public void addFrequentObserver(final FrequentMetronomeObserver frequentObserver)
   {
     frequentObservers.add(frequentObserver);
   }
@@ -347,6 +354,5 @@ public class MetronomeController extends MetronomePreset
   {
     for (FrequentMetronomeObserver cur : frequentObservers)
       cur.frequentUpdate(this);
-    ;
   }
 }

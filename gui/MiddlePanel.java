@@ -24,11 +24,12 @@ import resources.Constants;
  *         This work complies with the JMU Honor Code.
  */
 @SuppressWarnings("serial")
-public class MiddlePanel extends MetronomePanel implements ActionListener, FocusListener, MetronomeObserver
+public class MiddlePanel extends MetronomePanel
+    implements ActionListener, FocusListener, MetronomeObserver
 {
   private JButton startButton, incrementButton, decrementButton, tapButton;
   private JTextArea tempoInput;
-  double tempo; // This is just for form error corrections
+  private double tempo; // This is just for form error corrections
 
   /**
    * Constructs the middle panel of the metronome.
@@ -36,8 +37,7 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
   public MiddlePanel()
   {
     super(new GridBagLayout());
-    this.setPreferredSize(
-        new Dimension(Constants.WIDTH / 3, Constants.HEIGHT - 30));
+    this.setPreferredSize(new Dimension(Constants.WIDTH / 3, Constants.HEIGHT - 30));
     GridBagConstraints c = new GridBagConstraints();
 
     // Tempo Input
@@ -47,7 +47,7 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
     // Transfers focus when enter or space is pressed so the tempo updates
     tempoInput.addKeyListener(new KeyAdapter()
     {
-      public void keyPressed(KeyEvent e)
+      public void keyPressed(final KeyEvent e)
       {
         if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE)
         {
@@ -86,7 +86,7 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
     incrementButton.addActionListener(this);
     c.gridx = 1;
     this.add(incrementButton, c);
-    
+
     // Tap tempo Button
     tapButton = new TapTempoButton("Tap");
     tapButton.addActionListener(this);
@@ -101,9 +101,10 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
    * Constructs the middle panel of the metronome and adds a MetronomeController to the necessary
    * listeners.
    * 
-   * @param metronomeController the MetronomeController to add to the listeners.
+   * @param metronomeController
+   *          the MetronomeController to add to the listeners.
    */
-  public MiddlePanel(MetronomeController metronomeController)
+  public MiddlePanel(final MetronomeController metronomeController)
   {
     this();
     setMetronomeListeners(metronomeController);
@@ -124,7 +125,7 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
   {
     return tempoInput;
   }
-  
+
   /**
    * For use by the update method for the observer pattern. Updates the JTextArea.
    * 
@@ -138,7 +139,7 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
   }
 
   @Override
-  public void actionPerformed(ActionEvent e)
+  public void actionPerformed(final ActionEvent e)
   {
     switch (e.getActionCommand())
     {
@@ -151,11 +152,11 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
         startButton.setText(Constants.START);
         break;
       case Constants.INCREMENT:
-        tempo = (int)(tempo + 1);
+        tempo = (int) (tempo + 1);
         setTempo((double) tempo);
         break;
       case Constants.DECREMENT:
-        tempo = (int)(tempo - 1);
+        tempo = (int) (tempo - 1);
         setTempo((double) tempo);
         break;
       default:
@@ -193,19 +194,19 @@ public class MiddlePanel extends MetronomePanel implements ActionListener, Focus
   }
 
   @Override
-  public void setMetronomeListeners(MetronomeController metronomeController)
+  public void setMetronomeListeners(final MetronomeController metronomeController)
   {
     startButton.addActionListener(metronomeController);
     incrementButton.addActionListener(metronomeController);
     decrementButton.addActionListener(metronomeController);
     tempoInput.addFocusListener(metronomeController);
     tapButton.addActionListener(metronomeController);
-    
+
     metronomeController.addObserver(this);
   }
 
   @Override
-  public void update(MetronomeSubject metronomeSubject)
+  public void update(final MetronomeSubject metronomeSubject)
   {
     setTempo(((MetronomeController) metronomeSubject).getTempo());
   }

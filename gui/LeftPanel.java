@@ -1,12 +1,10 @@
 package gui;
 
-import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JButton;
-import javax.swing.JSlider;
 import javax.swing.JTextArea;
 
 import metronome.MetronomeController;
@@ -23,8 +21,8 @@ import resources.Constants;
 public class LeftPanel extends MetronomePanel implements MetronomeObserver
 {
   private double tempo;
-  JTextArea dqnText, eigthText, halfText;
-  
+  private JTextArea dqnText, eigthText, halfText;
+
   /**
    * Default constructor.
    */
@@ -32,7 +30,7 @@ public class LeftPanel extends MetronomePanel implements MetronomeObserver
   {
     super(new GridBagLayout());
     this.setPreferredSize(new Dimension(Constants.WIDTH / 3, Constants.HEIGHT - 30));
-    
+
     JButton dqnButton, eigthButton, halfButton;
 
     GridBagConstraints c = new GridBagConstraints();
@@ -56,46 +54,33 @@ public class LeftPanel extends MetronomePanel implements MetronomeObserver
     halfButton = new JButton("half");
     this.add(halfButton, c);
 
-//    c.gridy = 3;
-//    c.ipadx = 10;
-//    this.add(new JTextArea("16th"), c);
+    // c.gridy = 3;
+    // c.ipadx = 10;
+    // this.add(new JTextArea("16th"), c);
 
     c.gridx = 1;
     c.gridy = 0;
     c.gridwidth = 4;
-//    accentSlider = new JSlider(0, 127, 0);
-//    accentSlider.setBounds(0, 0, 50, 0);
+    // accentSlider = new JSlider(0, 127, 0);
+    // accentSlider.setBounds(0, 0, 50, 0);
     eigthText = new JTextArea("");
     this.add(eigthText, c);
 
     c.gridy = 1;
-//    eigthSlider = new JSlider(0, 127, 0);
+    // eigthSlider = new JSlider(0, 127, 0);
     dqnText = new JTextArea("");
     this.add(dqnText, c);
 
     c.gridy = 2;
-//    tripletSlider = new JSlider(0, 127, 0);
+    // tripletSlider = new JSlider(0, 127, 0);
     halfText = new JTextArea("");
     this.add(halfText, c);
-    
+
     setTempo(Constants.DEFAULT_TEMPO);
 
-//    c.gridy = 3;
-//    sixteenthSlider = new JSlider(0, 127, 0);
-//    this.add(sixteenthSlider, c);
-  }
-  
-  /**
-   * Sets the text in the tempo switch buttons.
-   * 
-   * @param tempo
-   */
-  public void setTempo(final double tempo)
-  {    
-    eigthText.setText(Double.toString(tempo * 2));
-    dqnText.setText(Double.toString(tempo / 1.5));
-    halfText.setText(Double.toString(tempo / 2));
-    
+    // c.gridy = 3;
+    // sixteenthSlider = new JSlider(0, 127, 0);
+    // this.add(sixteenthSlider, c);
   }
 
   /**
@@ -105,19 +90,32 @@ public class LeftPanel extends MetronomePanel implements MetronomeObserver
    * @param metronomeController
    *          the MetronomeController to add to the listeners.
    */
-  public LeftPanel(MetronomeController metronomeController)
+  public LeftPanel(final MetronomeController metronomeController)
   {
     this();
     setMetronomeListeners(metronomeController);
   }
 
+  /**
+   * Sets the text in the tempo switch buttons.
+   * 
+   * @param tempo
+   */
+  public void setTempo(final double tempo)
+  {
+    eigthText.setText(Double.toString(tempo * 2));
+    dqnText.setText(Double.toString(tempo / 1.5));
+    halfText.setText(Double.toString(tempo / 2));
+
+  }
+
   @Override
-  public void setMetronomeListeners(MetronomeController metronomeController)
+  public void setMetronomeListeners(final MetronomeController metronomeController)
   {
   }
 
   @Override
-  public void update(MetronomeSubject metronomeSubject)
+  public void update(final MetronomeSubject metronomeSubject)
   {
     tempo = ((MetronomeController) metronomeSubject).getTempo();
   }

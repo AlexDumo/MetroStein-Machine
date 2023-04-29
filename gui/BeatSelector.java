@@ -17,15 +17,30 @@ import resources.Constants;
 @SuppressWarnings("serial")
 public class BeatSelector extends JButton implements ActionListener
 {
+  /**
+   * Enum that keeps track of the State of a beatSelector.
+   */
   public static enum State
   {
     ACCENT(0), NORMAL(1), OFF(-1);
 
-    public final int clickValue;
+    private final int clickValue;
 
-    private State(int clickValue)
+    /**
+     * 
+     * @param clickValue the value of the State.
+     */
+    private State(final int clickValue)
     {
       this.clickValue = clickValue;
+    }
+
+    /**
+     * @return theClickValue of this State.
+     */
+    public int getClickValue()
+    {
+      return clickValue;
     }
   }
 
@@ -42,8 +57,8 @@ public class BeatSelector extends JButton implements ActionListener
   /**
    * Constructs a button with the NORMAL state.
    * 
-   * @param text
-   *          the text to add in the button.
+   * @param beatNumber
+   *          The beat this BeatSelector is assigned to.
    */
   public BeatSelector(final int beatNumber)
   {
@@ -60,7 +75,7 @@ public class BeatSelector extends JButton implements ActionListener
   {
     super(Integer.toString(beatNumber));
     isActive = false;
-    SetState(state);
+    setState(state);
     this.beatNumber = beatNumber;
 
     // Set the button attributes
@@ -77,21 +92,23 @@ public class BeatSelector extends JButton implements ActionListener
   {
     // The action command is the next state that the button will be in.
     setActionCommand(String.format("%s%c%s%c%d%c", BEAT_COMMAND, Constants.DELIMITER, beatNumber,
-        Constants.DELIMITER, stateToClickType(beatNumber, CycleState(false)), Constants.DELIMITER));
+        Constants.DELIMITER, stateToClickType(beatNumber, cycleState(false)), Constants.DELIMITER));
   }
-  
+
   /**
    * Gets the appropriate click type based on the beat number and state.
    * 
    * @param beatNumber
    * @param buttonState
+   * @return The integer value of the State.
    */
-  public static int stateToClickType(int beatNumber, State buttonState)
+  public static int stateToClickType(final int beatNumber, final State buttonState)
   {
     int output = ClickMachine.CLICK_OFF;
-    switch (buttonState){
+    switch (buttonState)
+    {
       case ACCENT:
-        if(beatNumber == 1)
+        if (beatNumber == 1)
           output = ClickMachine.CLICK_ACCENT;
         else
           output = ClickMachine.CLICK_SECONDARY_ACCENT;
@@ -106,18 +123,19 @@ public class BeatSelector extends JButton implements ActionListener
         break;
     }
     return output;
-  }  
-  
+  }
+
   /**
    * Gets the appropriate State based on the click type.
    * 
-   * @param beatNumber
-   * @param buttonState
+   * @param clickType
+   * @return the State based on the click type.
    */
-  public static State clickTypeToState(int clickType)
+  public static State clickTypeToState(final int clickType)
   {
     State output = State.OFF;
-    switch (clickType){
+    switch (clickType)
+    {
       case ClickMachine.CLICK_ACCENT:
       case ClickMachine.CLICK_SECONDARY_ACCENT:
         output = State.ACCENT;
@@ -143,7 +161,7 @@ public class BeatSelector extends JButton implements ActionListener
    *          state.
    * @return the new State.
    */
-  private State CycleState(boolean setState)
+  private State cycleState(final boolean setState)
   {
     State newState = State.NORMAL;
     switch (currentState)
@@ -157,20 +175,23 @@ public class BeatSelector extends JButton implements ActionListener
       case OFF:
         newState = State.ACCENT;
         break;
+      default:
+        break;
     }
-    if(setState)
-       SetState(newState);
+    if (setState)
+      setState(newState);
     return newState;
   }
 
   /**
    * Sets the current State. Also changes the color of the this BeatSelector.
    * 
+   * @param newState the State to set to.
    * @return the new State.
    */
-  private State SetState(final State newState)
+  private State setState(final State newState)
   {
-//    System.out.println("Cycling state " + currentState + " " + newState);
+    // System.out.println("Cycling state " + currentState + " " + newState);
     switch (newState)
     {
       case NORMAL:
@@ -184,6 +205,8 @@ public class BeatSelector extends JButton implements ActionListener
       case ACCENT:
         currentState = State.ACCENT;
         setColor(ACCENT_COLOR);
+        break;
+      default:
         break;
     }
     updateActionCommand();
@@ -243,7 +266,7 @@ public class BeatSelector extends JButton implements ActionListener
   @Override
   public void actionPerformed(final ActionEvent e)
   {
-    CycleState(true);
+    cycleState(true);
   }
 
 }

@@ -15,15 +15,15 @@ import resources.Constants;
 /**
  * @author Alexander Dumouchelle
  *
- * This work complies with the JMU Honor Code.
+ *         This work complies with the JMU Honor Code.
  */
 @SuppressWarnings("serial")
 public class RightPanel extends MetronomePanel implements ActionListener, MetronomeObserver
-{    
+{
   private BeatSelectorPanel beatSelectorPanel;
   private JComboBox<TimeSignature> timeSignatureComboBox;
   private JComboBox<Subdivision> subdivisionComboBox;
-  
+
   /**
    * Constructs the right panel of the metronome.
    */
@@ -31,14 +31,14 @@ public class RightPanel extends MetronomePanel implements ActionListener, Metron
   {
     super(new BorderLayout());
     this.setPreferredSize(new Dimension(Constants.WIDTH / 3, Constants.HEIGHT - 30));
-    
+
     // Time Signature Selector
     timeSignatureComboBox = new JComboBox<>(TimeSignature.TIME_SIGNATURES_4);
     timeSignatureComboBox.setSelectedItem(TimeSignature.getDefaultTimeSignature());
     timeSignatureComboBox.setActionCommand(Constants.METER_CHANGE);
     timeSignatureComboBox.addActionListener(this);
     this.add(timeSignatureComboBox, BorderLayout.PAGE_START);
-    
+
     // Subdivision Selector
     subdivisionComboBox = new JComboBox<Subdivision>(Subdivision.values());
     subdivisionComboBox.setSelectedItem(Subdivision.None);
@@ -48,23 +48,24 @@ public class RightPanel extends MetronomePanel implements ActionListener, Metron
 
     // Beat Type Selectors
     beatSelectorPanel = new BeatSelectorPanel(TimeSignature.getDefaultTimeSignature());
-    this.add(beatSelectorPanel, BorderLayout.CENTER);  
+    this.add(beatSelectorPanel, BorderLayout.CENTER);
   }
 
   /**
    * Constructs the right panel of the metronome and adds a MetronomeController to the necessary
    * listeners.
    * 
-   * @param metronomeController the MetronomeController to add to the listeners.
+   * @param metronomeController
+   *          the MetronomeController to add to the listeners.
    */
-  public RightPanel(MetronomeController metronomeController)
+  public RightPanel(final MetronomeController metronomeController)
   {
     this();
     setMetronomeListeners(metronomeController);
   }
 
   @Override
-  public void setMetronomeListeners(MetronomeController metronomeController)
+  public void setMetronomeListeners(final MetronomeController metronomeController)
   {
     beatSelectorPanel.addActionListener(metronomeController);
     timeSignatureComboBox.addActionListener(metronomeController);
@@ -74,22 +75,24 @@ public class RightPanel extends MetronomePanel implements ActionListener, Metron
     metronomeController.addObserver(this);
     metronomeController.addMetronomeListener(beatSelectorPanel);
     metronomeController.addFrequentObserver(beatSelectorPanel);
-    
+
   }
 
   @Override
-  public void actionPerformed(ActionEvent e)
+  public void actionPerformed(final ActionEvent e)
   {
-//    beatSelectorPanel.updateBeatSelectors((TimeSignature) ((JComboBox<TimeSignature>) e.getSource()).getSelectedItem());
+    // beatSelectorPanel.updateBeatSelectors((TimeSignature) ((JComboBox<TimeSignature>)
+    // e.getSource()).getSelectedItem());
   }
 
   @Override
-  public void update(MetronomeSubject metronomeSubject)
+  public void update(final MetronomeSubject metronomeSubject)
   {
-    MetronomeController metronomeController = (MetronomeController)metronomeSubject;
+    MetronomeController metronomeController = (MetronomeController) metronomeSubject;
     // Check if the time signature has changed.
-    if(!timeSignatureComboBox.getSelectedItem().equals(metronomeController.getTimeSignature()))
-      timeSignatureComboBox.setSelectedItem(((MetronomeController)metronomeSubject).getTimeSignature());
+    if (!timeSignatureComboBox.getSelectedItem().equals(metronomeController.getTimeSignature()))
+      timeSignatureComboBox
+          .setSelectedItem(((MetronomeController) metronomeSubject).getTimeSignature());
   }
 
 }

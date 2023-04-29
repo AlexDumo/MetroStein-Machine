@@ -116,8 +116,8 @@ public class MetronomePreset
 
   /**
    * Sets the click emphasis on a given beat. Beats cannot have more than one click type, so if it
-   * already has a click type, it will overwrite it. If there is an invalid click type, it will set to
-   * the default click (1). If there is an invalid beat number, the method returns immediately. 
+   * already has a click type, it will overwrite it. If there is an invalid click type, it will set
+   * to the default click (1). If there is an invalid beat number, the method returns immediately.
    * 
    * @param beatNumber
    *          The beat to change the click emphasis on. Invalid numbers are ignored.

@@ -31,8 +31,10 @@ public class BeatSelectorPanel extends JPanel
 
   /**
    * Creates and initializes a new BeatSelectorPanel of the given time signature with a grid layout.
+   * 
+   * @param timeSignature
    */
-  public BeatSelectorPanel(TimeSignature timeSignature)
+  public BeatSelectorPanel(final TimeSignature timeSignature)
   {
     super(new GridLayout());
 
@@ -45,8 +47,12 @@ public class BeatSelectorPanel extends JPanel
 
   /**
    * Updates the accent selectors for beats.
+   * 
+   * @param newTimeSignature
+   * @param beatTypes
    */
-  protected void updateBeatSelectors(TimeSignature newTimeSignature, ArrayList<Integer> beatTypes)
+  protected void updateBeatSelectors(final TimeSignature newTimeSignature,
+      final ArrayList<Integer> beatTypes)
   {
     // System.out.println("Updating beat selectors " + newTimeSignature.toString());
     beatSelectors.clear();
@@ -62,8 +68,10 @@ public class BeatSelectorPanel extends JPanel
    * 
    * @param beats
    *          the amount of beat buttons to add.
+   * @param beatTypes
+   *          an ArrayList<Integer> with the types of beats to add.
    */
-  private void generateButtons(int beats, ArrayList<Integer> beatTypes)
+  private void generateButtons(final int beats, final ArrayList<Integer> beatTypes)
   {
     int rows = 1 + (beats - 1) / 5;
     int cols = (beats % 5 == 0) ? 5 : 4;
@@ -88,16 +96,16 @@ public class BeatSelectorPanel extends JPanel
   }
 
   @Override
-  public void handleTick(int millis)
+  public void handleTick(final int millis)
   {
-    // System.out.println("Tick " + millis);
+    // Does nothing
   }
 
   /**
-   * @param metronomeController
-   *          the metronomeController to set
+   * @param actionListener
+   *          the actionListener to set
    */
-  public void addActionListener(ActionListener actionListener)
+  public void addActionListener(final ActionListener actionListener)
   {
     actionListeners.add(actionListener);
     for (JButton cur : beatSelectors)
@@ -105,7 +113,7 @@ public class BeatSelectorPanel extends JPanel
   }
 
   @Override
-  public void actionPerformed(ActionEvent e)
+  public void actionPerformed(final ActionEvent e)
   {
     // System.out.printf("action performed %s\n", e.getActionCommand());
     // TODO Auto-generated method stub
@@ -113,7 +121,7 @@ public class BeatSelectorPanel extends JPanel
   }
 
   @Override
-  public void update(MetronomeSubject metronomeSubject)
+  public void update(final MetronomeSubject metronomeSubject)
   {
     MetronomeController metronomeController = (MetronomeController) metronomeSubject;
     updateBeatSelectors(metronomeController.getTimeSignature(),
@@ -123,7 +131,7 @@ public class BeatSelectorPanel extends JPanel
   }
 
   @Override
-  public void frequentUpdate(MetronomeSubject metronomeSubject)
+  public void frequentUpdate(final MetronomeSubject metronomeSubject)
   {
     MetronomeController metronomeController = (MetronomeController) metronomeSubject;
 

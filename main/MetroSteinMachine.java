@@ -43,7 +43,7 @@ public class MetroSteinMachine extends JApplication
    * @param args
    *          Arguments to pass.
    */
-  public static void main(String[] args)
+  public static void main(final String[] args)
   {
     JApplication app = new MetroSteinMachine(args);
     invokeInEventDispatchThread(app);

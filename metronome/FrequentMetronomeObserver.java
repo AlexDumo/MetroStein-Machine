@@ -3,9 +3,10 @@ package metronome;
 /**
  * @author Alexander Dumouchelle
  *
- * This work complies with the JMU Honor Code.
+ *         This work complies with the JMU Honor Code.
  * 
- * A FrequentMetronomeObserver updates every metronome click based on the state of a MetronomeSubject.
+ *         A FrequentMetronomeObserver updates every metronome click based on the state of a
+ *         MetronomeSubject.
  */
 public interface FrequentMetronomeObserver
 {

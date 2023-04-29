@@ -48,14 +48,14 @@ public class SubdivisionController extends MetronomeController
    *          Whether or not the subdivision should have an initial click
    */
   @Override
-  public void start(boolean initialClick)
+  public void start(final boolean initialClick)
   {
     super.start(initialClick);
   }
 
   // Overrides the click
   @Override
-  public void handleTick(int millis)
+  public void handleTick(final int millis)
   {
     // System.out.println("current beat " + currentBeat);
     clicker.click(getClickTypes().get(currentBeat - 1));

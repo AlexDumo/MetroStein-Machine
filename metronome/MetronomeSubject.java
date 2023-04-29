@@ -26,6 +26,8 @@ public interface MetronomeSubject
   /**
    * Adds a frequent observer to the subject. 
    * A frequent Observer is notified every metronome click.
+   * 
+   * @param frequentObserver The FrequentMetronomeObserver to add.
    */
   public void addFrequentObserver(FrequentMetronomeObserver frequentObserver);
 

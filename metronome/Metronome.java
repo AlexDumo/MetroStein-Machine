@@ -17,6 +17,8 @@ import javax.swing.Timer;
  */
 public class Metronome
 {
+  private static final int DEFAULT_DELAY = 500;
+
   private int delay;
   private volatile boolean running;
   private Timer timer;
@@ -24,8 +26,6 @@ public class Metronome
   private ArrayList<MetronomeListener> listeners;
   private MetronomeTickDispatcher dispatcher;
   private MetronomeListener[] copy;
-
-  private static final int DEFAULT_DELAY = 500;
 
   /**
    * constructor to set up the metronome with given delay.
@@ -47,7 +47,7 @@ public class Metronome
     listener = new ActionListener()
     {
       @Override
-      public void actionPerformed(ActionEvent e)
+      public void actionPerformed(final ActionEvent e)
       {
         notifyListeners();
       }
@@ -79,7 +79,9 @@ public class Metronome
     running = true;
   }
 
-  // stop the metronome
+  /**
+   * Stop the metronome.
+   */
   public void stop()
   {
     timer.stop();
@@ -97,8 +99,8 @@ public class Metronome
   }
 
   /**
-   * Sets the millisecond delay of this Metronome. Can be used while running. Ignores any values <
-   * 1.
+   * Sets the millisecond delay of this Metronome. Can be used while running. Ignores any values
+   * less than 1.
    * 
    * @param newDelay
    */
@@ -128,8 +130,8 @@ public class Metronome
 
   /**
    * Sets the Metronome's tempo to the given bpm (beats per minute). Only accurate to the
-   * millisecond. Can be used while the metronome is running. Ignores values that will evaluate to <
-   * 1ms.
+   * millisecond. Can be used while the metronome is running. Ignores values that will evaluate to
+   * less than 1ms.
    * 
    * @param bpm
    *          The bpm to use. Only accurate to the millisecond (rounds down).
@@ -142,13 +144,13 @@ public class Metronome
   /**
    * Add a MetronomeListener. Copied from the Multimedia API.
    * 
-   * @param listener
+   * @param newListener
    *          The MetronomeListener to add
    */
-  public synchronized void addListener(final MetronomeListener listener)
+  public synchronized void addListener(final MetronomeListener newListener)
   {
 
-    listeners.add(listener);
+    listeners.add(newListener);
     copyListeners();
   }
 
@@ -193,17 +195,17 @@ public class Metronome
    * @param ml
    *          The MetronomeListener to remove
    */
-  public synchronized void removeListener(MetronomeListener ml)
+  public synchronized void removeListener(final MetronomeListener ml)
   {
     listeners.remove(ml);
     copyListeners();
   }
 
-  /*
+  /**
    * Converts bpm (beats per minute) to milliseconds per tick. Rounds down to the millisecond.
    * 
-   * @param bpm The bpm to convert to milliseconds
-   * 
+   * @param bpm
+   *          The bpm to convert to milliseconds
    * @return The milliseconds per click.
    */
   public static int bpmToMilli(final double bpm)
@@ -211,10 +213,11 @@ public class Metronome
     return (int) (60000.0 / bpm);
   }
 
-  /*
+  /**
    * Converts millisecond delay into beats per minute (bpm).
    * 
-   * @param bpm The millisecond delay to convert to bpm
+   * @param milli
+   *          The millisecond delay to convert to bpm
    * 
    * @return The bpm
    */
@@ -234,7 +237,7 @@ public class Metronome
     private MetronomeListener[] listeners;
 
     /**
-     * Code to be executed in the event-dispatch thread (required by Runnable)
+     * Code to be executed in the event-dispatch thread (required by Runnable).
      *
      * Specifically, notify the listeners
      */
@@ -253,14 +256,12 @@ public class Metronome
     /**
      * Setup this MetronomeTickDispatcher for the next dispatch.
      *
-     * @param listeners
+     * @param newListeners
      *          The collection of MetronomeListener objects
-     * @param time
-     *          The (relative) time of the tick
      */
-    public void setup(MetronomeListener[] listeners)
+    public void setup(final MetronomeListener[] newListeners)
     {
-      this.listeners = listeners;
+      this.listeners = newListeners;
     }
   }
 }
