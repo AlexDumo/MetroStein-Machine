@@ -97,6 +97,12 @@ public class MetronomePreset
    */
   public void setTimeSignature(final TimeSignature timeSignature)
   {
+    // Change the tempo with denominators. All x/8 time signatures have dotted quarter as emphasis.
+    // if (timeSignature.getDenominator() == 4 && this.timeSignature.getDenominator() == 8)
+    // setTempo(tempo * 1.5);
+    // else if (timeSignature.getDenominator() == 8 && this.timeSignature.getDenominator() == 4)
+    // setTempo(tempo / 1.5);
+    
     clickTypes.clear();
     clickTypes.ensureCapacity(timeSignature.getNumerator());
 

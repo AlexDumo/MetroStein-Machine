@@ -40,7 +40,7 @@ public class LeftPanel extends MetronomePanel implements MetronomeObserver
     c.ipadx = 10;
     c.ipady = 10;
     c.fill = GridBagConstraints.HORIZONTAL;
-    eigthButton = new JButton("Eigth");
+    eigthButton = new JButton("eigth");
     this.add(eigthButton, c);
 
     c.gridy = 1;

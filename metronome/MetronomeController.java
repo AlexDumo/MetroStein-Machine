@@ -33,7 +33,10 @@ public class MetronomeController extends MetronomePreset
   private SubdivisionController subdivisionController;
   private double subdivisionMultiplier;
 
-  private boolean isSubdivision, subdivisionOn, isRunning;
+  private boolean isSubdivision, // If this is an instance of a SubdivisionController
+      subdivisionOn, // If the subdivision is activated
+      firstSubdivision, // If this is the first time the subdivision is active (bug fix)
+      isRunning; // The MetronomeController is running
 
   private Set<MetronomeObserver> metronomeObservers;
   private Set<FrequentMetronomeObserver> frequentObservers;
@@ -60,11 +63,7 @@ public class MetronomeController extends MetronomePreset
     currentBeat = 1;
 
     if (!isSubdivision)
-    {
       subdivisionController = new SubdivisionController();
-      // subdivisionController.setDelay((int) (met.getDelay() / subdivisionMultiplier));
-      // subdivisionController.setTimeSignature(TimeSignature.getTimeSignature(3, 4));
-    }
   }
 
   /**
@@ -91,11 +90,11 @@ public class MetronomeController extends MetronomePreset
    */
   public void setTempo(final double tempo)
   {
-    System.out.println("Tempo " + tempo);
+//    System.out.println("Tempo " + tempo);
     super.setTempo(tempo);
     met.setTempo(tempo);
     if (subdivisionController != null)
-      subdivisionController.setTempo(getTempo() / subdivisionMultiplier);
+      subdivisionController.setTempo(getTempo() * subdivisionMultiplier);
   }
 
   /**
@@ -106,7 +105,7 @@ public class MetronomeController extends MetronomePreset
    */
   public void setDelay(final int delay)
   {
-    System.out.printf("Old delay %d, New Delay: %d\n", Metronome.bpmToMilli(getTempo()), delay);
+//    System.out.printf("Old delay %d, New Delay: %d\n", Metronome.bpmToMilli(getTempo()), delay);
     super.setTempo(Metronome.milliToBpm(delay));
     met.setDelay(delay);
     if (subdivisionController != null)
@@ -144,6 +143,7 @@ public class MetronomeController extends MetronomePreset
   {
     if (!isSubdivision && subdivisionOn)
       subdivisionController.start(true);
+
     met.start(initialClick);
     isRunning = true;
   }
@@ -209,7 +209,6 @@ public class MetronomeController extends MetronomePreset
     // setTempo(tempo);
     setTimeSignature(metronomePreset.getTimeSignature());
     setSubdivision(metronomePreset.getSubdivision());
-    // setClickTypes(clickTypes);
   }
 
   // ---------- Override Methods ----------
@@ -287,7 +286,10 @@ public class MetronomeController extends MetronomePreset
       subdivisionController.start(false);
     // Reset to the start of the measure
     if (currentBeat > getTimeSignature().getNumerator())
+    {
+      System.gc();
       currentBeat = 1;
+    }
 
     clicker.click(getClickTypes().get(currentBeat - 1));
 

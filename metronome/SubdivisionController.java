@@ -31,6 +31,7 @@ public class SubdivisionController extends MetronomeController
   @Override
   public void setTimeSignature(final TimeSignature timeSignature)
   {
+    stop();
     ArrayList<Integer> clickTypes = getClickTypes();
     super.setTimeSignature(timeSignature);
     clickTypes.clear();
@@ -39,6 +40,7 @@ public class SubdivisionController extends MetronomeController
     for (int i = 0; i < timeSignature.getNumerator(); i++)
       clickTypes.add(i, ClickMachine.CLICK_SUBDIVISION);
     clickTypes.set(0, -1); // sets the first beat to silent
+    currentBeat = 1;
   }
 
   /**
@@ -64,7 +66,7 @@ public class SubdivisionController extends MetronomeController
 
     // Stop the subdivision after every measure.
     if (super.currentBeat == getTimeSignature().getNumerator())
-      this.stop();
+      stop();
 
     currentBeat++;
 

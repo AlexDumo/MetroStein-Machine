@@ -9,7 +9,7 @@ package resources;
  */
 public class Constants
 {  
-  public static final int WIDTH = 600, HEIGHT = 600;
+  public static final int WIDTH = 600, HEIGHT = 300;
   
   public static final char DELIMITER = '$';
   

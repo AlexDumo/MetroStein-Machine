@@ -59,13 +59,9 @@ public class MetroSteinMachine extends JApplication
     metronomeController = new MetronomeController();
 
     JTextArea title;
-    
-//    JButton testButton = new JButton("test");
-//    testButton.addActionListener(metronomeController);
-//    contentPane.add(testButton, BorderLayout.SOUTH);
 
     // Add the title
-    title = new JTextArea("MetroStein Machine");
+    title = new JTextArea("        MetroStein Machine");
     title.setEditable(false);
     title.setFont(new Font("Tahoma", Font.BOLD, 40));
     contentPane.add(title, BorderLayout.PAGE_START);
