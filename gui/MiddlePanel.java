@@ -168,14 +168,15 @@ public class MiddlePanel extends MetronomePanel
   @Override
   public void focusGained(final FocusEvent e)
   {
-    System.out.println("You're in Focus! " + ((JTextArea) e.getSource()).getText());
+    // Does Nothing
+    // System.out.println("You're in Focus! " + ((JTextArea) e.getSource()).getText());
 
   }
 
   @Override
   public void focusLost(final FocusEvent e)
   {
-    System.out.println("You're out of Focus! " + ((JTextArea) e.getSource()).getText());
+    // System.out.println("You're out of Focus! " + ((JTextArea) e.getSource()).getText());
     try
     {
       double newTempo = Double.parseDouble(((JTextArea) e.getSource()).getText());
