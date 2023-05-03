@@ -58,3 +58,5 @@ This is a final project for CS 349: Developing Multimedia Applications at James 
     - Subdivisions, when changed while the metronome is running, will take exactly two beats to line up properly. 
     - The subdivision will click at the same time as the "Start" button click if that subdivision was already in effect in the last run.
 - Every click creates a Dameon thread. I don't know why and I don't know what the consequences are.
+- Maybe not a bug, but an oversight. Using the eigth and half button, a user can set the tempo as high as they want or all the way down to 0 bypassing the normal limitations of 1-500.
+    - Changing the tempo in each of these boxes ideally should set the quarter note tempo to that respecitve ratio. That's just not implemented.
