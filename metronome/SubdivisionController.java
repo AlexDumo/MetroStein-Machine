@@ -19,11 +19,12 @@ public class SubdivisionController extends MetronomeController
   public SubdivisionController()
   {
     super(true);
+    setTimeSignature(TimeSignature.getTimeSignature(2, 4));
   }
 
   /**
    * Sets the time signature and puts the beats to the appropriate ones for subdivisions. Must be a
-   * supported time signature, otherwise 4/4.
+   * supported time signature, otherwise 4/4. Ignores null input.
    * 
    * @param timeSignature
    *          the timeSignature to set
@@ -31,6 +32,9 @@ public class SubdivisionController extends MetronomeController
   @Override
   public void setTimeSignature(final TimeSignature timeSignature)
   {
+    if(timeSignature == null)
+      return;
+    
     stop();
     ArrayList<Integer> clickTypes = getClickTypes();
     super.setTimeSignature(timeSignature);
@@ -59,19 +63,18 @@ public class SubdivisionController extends MetronomeController
   @Override
   public void handleTick(final int millis)
   {
-    // System.out.println("current beat " + currentBeat);
     clicker.click(getClickTypes().get(currentBeat - 1));
 
     notifyFrequentObservers();
 
     // Stop the subdivision after every measure.
-    if (super.currentBeat == getTimeSignature().getNumerator())
+    if (super.currentBeat >= getTimeSignature().getNumerator())
       stop();
 
     currentBeat++;
 
     // Reset to the start of the measure
-    if (currentBeat > getTimeSignature().getNumerator())
-      currentBeat = 1;
+//    if (currentBeat > getTimeSignature().getNumerator())
+//      currentBeat = 1;
   }
 }

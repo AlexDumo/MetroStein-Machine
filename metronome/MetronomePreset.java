@@ -90,19 +90,16 @@ public class MetronomePreset
   }
 
   /**
-   * Sets the time signature and changes clicks to default.
+   * Sets the time signature and changes clicks to default. Null values ignored
    * 
    * @param timeSignature
    *          the timeSignature to set
    */
   public void setTimeSignature(final TimeSignature timeSignature)
   {
-    // Change the tempo with denominators. All x/8 time signatures have dotted quarter as emphasis.
-    // if (timeSignature.getDenominator() == 4 && this.timeSignature.getDenominator() == 8)
-    // setTempo(tempo * 1.5);
-    // else if (timeSignature.getDenominator() == 8 && this.timeSignature.getDenominator() == 4)
-    // setTempo(tempo / 1.5);
-    
+    if(timeSignature == null)
+      return;
+
     clickTypes.clear();
     clickTypes.ensureCapacity(timeSignature.getNumerator());
 
@@ -133,7 +130,7 @@ public class MetronomePreset
   public void setClickType(final int beatNumber, final int clickToUse)
   {
     // Invalid beat
-    if (beatNumber < 0 || beatNumber > timeSignature.getNumerator())
+    if (beatNumber < 1 || beatNumber > timeSignature.getNumerator())
       return;
 
     if (clickToUse < ClickMachine.CLICK_MIN || clickToUse > ClickMachine.CLICK_MAX)
@@ -145,7 +142,9 @@ public class MetronomePreset
   /**
    * Sets the click emphasis on a given beat. Beats cannot have more than one click type, so if it
    * already has a click type, it will overwrite it. If there is an invalid input, it will reset to
-   * the default click (1).
+   * the default click (1). If there is not enough in the array to populate the current time
+   * signature, it will fill the rest with the default click. If there is too much in the array, any
+   * information past the time signature numerator length will be ignored.
    * 
    * @param typeArray
    *          The ArrayList<Integer> of the instructions. Invalid beat numbers are ignored. Invalid
@@ -153,16 +152,16 @@ public class MetronomePreset
    */
   public void setClickTypes(final ArrayList<Integer> typeArray)
   {
-    // Loops through the Arraylist
-    // TODO this line is bad because it modifies a parameter
-    typeArray.ensureCapacity(timeSignature.getNumerator()); // ensures array is long enough for
-                                                            // current TimeSignature
+    if(typeArray == null)
+      return;
+    
     Integer cur;
     for (int i = 0; i < timeSignature.getNumerator(); i++)
     {
-      cur = typeArray.get(i);
-      if (cur == null)
+      if (typeArray.size() <= i)
         cur = ClickMachine.CLICK_DEFAULT;
+      else
+        cur = typeArray.get(i);
       setClickType(i + 1, cur);
     }
   }

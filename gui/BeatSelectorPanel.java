@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,25 +23,20 @@ import metronome.TimeSignature;
  */
 @SuppressWarnings("serial")
 public class BeatSelectorPanel extends JPanel
-    implements MetronomeListener, ActionListener, MetronomeObserver, FrequentMetronomeObserver
+    implements MetronomeListener, MetronomeObserver, FrequentMetronomeObserver
 {
   private ArrayList<BeatSelector> beatSelectors;
   private Set<ActionListener> actionListeners;
 
   /**
-   * Creates and initializes a new BeatSelectorPanel of the given time signature with a grid layout.
-   * 
-   * @param timeSignature
+   * Creates and initializes a new BeatSelectorPanel with a grid layout.
    */
-  public BeatSelectorPanel(final TimeSignature timeSignature)
+  public BeatSelectorPanel()
   {
     super(new GridLayout());
-
+    
     beatSelectors = new ArrayList<BeatSelector>();
     actionListeners = new HashSet<ActionListener>();
-
-    // Initialize default time signature
-    // updateBeatSelectors(TimeSignature.getDefaultTimeSignature());
   }
 
   /**
@@ -113,20 +107,11 @@ public class BeatSelectorPanel extends JPanel
   }
 
   @Override
-  public void actionPerformed(final ActionEvent e)
-  {
-    // System.out.printf("action performed %s\n", e.getActionCommand());
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
   public void update(final MetronomeSubject metronomeSubject)
   {
     MetronomeController metronomeController = (MetronomeController) metronomeSubject;
     updateBeatSelectors(metronomeController.getTimeSignature(),
         metronomeController.getClickTypes());
-    // TODO Auto-generated method stub
 
   }
 

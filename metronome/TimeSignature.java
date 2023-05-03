@@ -5,7 +5,8 @@ package metronome;
  *
  *         This work complies with the JMU Honor Code.
  * 
- *         A TimeSignature is a simple object that has a numerator and a denominator.
+ *         A TimeSignature is a simple object that has a numerator and a denominator. You cannot
+ *         construct your own. You must get a time signature using the getTimeSignature(int, int).
  */
 public class TimeSignature
 {
@@ -19,7 +20,7 @@ public class TimeSignature
       // new TimeSignature(6, 8), new TimeSignature(7, 8), new TimeSignature(8, 8),
       // new TimeSignature(9, 8), new TimeSignature(10, 8), new TimeSignature(11, 8),
       // new TimeSignature(12, 8)
-      };
+  };
   private static final int DEFAULT_TIME_SIGNATURE_INDEX = 3;
 
   private int numerator;
@@ -108,7 +109,7 @@ public class TimeSignature
       return false;
     return other.hashCode() == hashCode();
   }
-  
+
   @Override
   public int hashCode()
   {

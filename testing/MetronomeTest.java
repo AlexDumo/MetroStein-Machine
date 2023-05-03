@@ -2,7 +2,6 @@ package testing;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import metronome.MetronomeListener;
@@ -12,14 +11,14 @@ import metronome.MetronomeController;
 /**
  * @author Alexander Dumouchelle
  *
- * This work complies with the JMU Honor Code.
+ *         This work complies with the JMU Honor Code.
  */
 class MetronomeTest
 {
-  private Metronome testMetronome;
-  
   private static final int DEFAULT_DELAY = 500;
   private static final double DEFAULT_TEMPO = 120.0;
+
+  private Metronome metronome;
 
   /**
    * Test method for {@link metronome.Metronome#Metronome(int)}.
@@ -27,83 +26,96 @@ class MetronomeTest
   @Test
   final void testMetronomeInt()
   {
-    testMetronome = new Metronome();
-    assertEquals(DEFAULT_DELAY, testMetronome.getDelay());
-    assertEquals(DEFAULT_TEMPO, testMetronome.getTempo());
+    metronome = new Metronome();
+    assertEquals(DEFAULT_DELAY, metronome.getDelay());
+    assertEquals(DEFAULT_TEMPO, metronome.getTempo());
 
     int newDelay = 250;
-    testMetronome = new Metronome(newDelay);
-    assertEquals(newDelay, testMetronome.getDelay());
-    
+    metronome = new Metronome(newDelay);
+    assertEquals(newDelay, metronome.getDelay());
+
     newDelay = 1000;
-    testMetronome = new Metronome(newDelay);
-    assertEquals(newDelay, testMetronome.getDelay());
-    
+    metronome = new Metronome(newDelay);
+    assertEquals(newDelay, metronome.getDelay());
+
     newDelay = -1;
-    testMetronome = new Metronome(newDelay);
-    assertEquals(DEFAULT_DELAY, testMetronome.getDelay());
+    metronome = new Metronome(newDelay);
+    assertEquals(DEFAULT_DELAY, metronome.getDelay());
   }
 
-
   /**
-   * Test method for bpmToMilli.
+   * Test method for {@link metronome.Metronome#bpmToMilli(double)}.
    */
   @Test
   final void testBpmToMilli()
   {
     double bpm = 120.0;
     assertEquals((int) (60000 / bpm), Metronome.bpmToMilli(bpm));
-    
+
     bpm = -5.0;
     assertEquals((int) (60000 / bpm), Metronome.bpmToMilli(bpm));
-    
+
     bpm = 2000.65115616;
     assertEquals((int) (60000 / bpm), Metronome.bpmToMilli(bpm));
-    
+
     bpm = 0.0;
     assertEquals((int) (60000 / bpm), Metronome.bpmToMilli(bpm));
   }
 
   /**
-   * Test method for milliToBpm.
+   * Test method for {@link metronome.Metronome#milliToBpm(int)}.
    */
   @Test
   final void testMilliToBpm()
   {
     int milli = 500;
     assertEquals(60000.0 / milli, Metronome.milliToBpm(milli));
-    
+
     milli = -5;
     assertEquals(60000.0 / milli, Metronome.milliToBpm(milli));
-    
+
     milli = 2000;
     assertEquals(60000.0 / milli, Metronome.milliToBpm(milli));
-    
+
     milli = 0;
     assertEquals(60000.0 / milli, Metronome.milliToBpm(milli));
   }
 
   /**
    * Test method for {@link metronome.Metronome#setDelay(int)}.
+   * @throws InterruptedException 
    */
   @Test
-  final void testSetDelay()
+  final void testSetDelay() throws InterruptedException
   {
-    testMetronome = new Metronome();
-    assertEquals(DEFAULT_DELAY, testMetronome.getDelay());
-    
+    metronome = new Metronome();
+    assertEquals(DEFAULT_DELAY, metronome.getDelay());
+
     int newDelay = 250;
-    testMetronome.setDelay(newDelay);
-    assertEquals(newDelay, testMetronome.getDelay());
-    
+    metronome.setDelay(newDelay);
+    assertEquals(newDelay, metronome.getDelay());
+
     newDelay = 1000;
-    testMetronome.setDelay(newDelay);
-    assertEquals(newDelay, testMetronome.getDelay());
-    
+    metronome.setDelay(newDelay);
+    assertEquals(newDelay, metronome.getDelay());
+
     int oldDelay = newDelay;
     newDelay = -1;
-    testMetronome.setDelay(newDelay);
-    assertEquals(oldDelay, testMetronome.getDelay());
+    metronome.setDelay(newDelay);
+    assertEquals(oldDelay, metronome.getDelay());
+
+    metronome.start(false);
+    newDelay = 1000;
+    metronome.setDelay(newDelay);
+    assertEquals(newDelay, metronome.getDelay());
+    metronome.stop();
+
+    metronome.start(true);
+    Thread.sleep(600);
+    newDelay = 500;
+    metronome.setDelay(newDelay);
+    assertEquals(newDelay, metronome.getDelay());
+    metronome.stop();
   }
 
   /**
@@ -112,25 +124,25 @@ class MetronomeTest
   @Test
   final void testSetTempo()
   {
-    testMetronome = new Metronome();
-    assertEquals(DEFAULT_TEMPO, testMetronome.getTempo());
-    
+    metronome = new Metronome();
+    assertEquals(DEFAULT_TEMPO, metronome.getTempo());
+
     double newTempo = 120.5;
-    testMetronome.setTempo(newTempo);
-    assertEquals(newTempo, testMetronome.getTempo(), .5);
-    assertEquals(Metronome.bpmToMilli(newTempo), testMetronome.getDelay());
-    assertEquals(newTempo, Metronome.milliToBpm(testMetronome.getDelay()), .5);
-    
+    metronome.setTempo(newTempo);
+    assertEquals(newTempo, metronome.getTempo(), .5);
+    assertEquals(Metronome.bpmToMilli(newTempo), metronome.getDelay());
+    assertEquals(newTempo, Metronome.milliToBpm(metronome.getDelay()), .5);
+
     newTempo = 1000;
-    testMetronome.setTempo(newTempo);
-    assertEquals(newTempo, testMetronome.getTempo(), .5);
-    assertEquals(Metronome.bpmToMilli(newTempo), testMetronome.getDelay());
-    assertEquals(newTempo, Metronome.milliToBpm(testMetronome.getDelay()), .5);
-    
+    metronome.setTempo(newTempo);
+    assertEquals(newTempo, metronome.getTempo(), .5);
+    assertEquals(Metronome.bpmToMilli(newTempo), metronome.getDelay());
+    assertEquals(newTempo, Metronome.milliToBpm(metronome.getDelay()), .5);
+
     double oldTempo = newTempo;
     newTempo = -1;
-    testMetronome.setTempo(newTempo);
-    assertEquals(oldTempo, testMetronome.getTempo(), .5);
+    metronome.setTempo(newTempo);
+    assertEquals(oldTempo, metronome.getTempo(), .5);
   }
 
   /**
@@ -139,19 +151,55 @@ class MetronomeTest
   @Test
   final void testListener()
   {
-    testMetronome = new Metronome();
-    
-    assertEquals(testMetronome.getNumberOfListeners(), 0);
-    
+    metronome = new Metronome();
+
+    assertEquals(metronome.getNumberOfListeners(), 0);
+
     MetronomeListener ml = new MetronomeController();
-    testMetronome.addListener(ml);
-    assertEquals(testMetronome.getNumberOfListeners(), 1);
+    metronome.addListener(ml);
+    assertEquals(metronome.getNumberOfListeners(), 1);
+
+    metronome.removeListener(null);
+    assertEquals(metronome.getNumberOfListeners(), 1);
+
+    metronome.removeListener(ml);
+    assertEquals(metronome.getNumberOfListeners(), 0);
+  }
+  
+  /**
+   * Tests the start and stop method when metronome listeners are there.
+   * @throws InterruptedException 
+   */
+  @Test
+  final void testStartAndStopWithListeners() throws InterruptedException
+  {
+    metronome = new Metronome();
+    assertEquals(metronome.getNumberOfListeners(), 0);
+
+    MetronomeListener ml = new MetronomeController();
+    metronome.addListener(ml);
+    assertEquals(metronome.getNumberOfListeners(), 1);
+
+    MetronomeListener ml2 = new MetronomeController();
+    metronome.addListener(ml2);
+    assertEquals(metronome.getNumberOfListeners(), 2);
     
-    testMetronome.removeListener(null);
-    assertEquals(testMetronome.getNumberOfListeners(), 1);
+    metronome.start(false);
+    Thread.sleep(700);
+    metronome.stop();
+    assertEquals(metronome.getNumberOfListeners(), 2);
     
-    testMetronome.removeListener(ml);
-    assertEquals(testMetronome.getNumberOfListeners(), 0);
+    metronome.addListener(null);
+    metronome.start(true);
+    Thread.sleep(700);
+    metronome.stop();
+    assertEquals(metronome.getNumberOfListeners(), 3);
+    
+    metronome.addListener((MetronomeListener) null);
+    metronome.start(true);
+    Thread.sleep(700);
+    metronome.stop();
+    assertEquals(metronome.getNumberOfListeners(), 4);
   }
 
 }

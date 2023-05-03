@@ -2,8 +2,6 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import metronome.MetronomeController;
 import metronome.MetronomeObserver;
@@ -18,7 +16,7 @@ import resources.Constants;
  *         This work complies with the JMU Honor Code.
  */
 @SuppressWarnings("serial")
-public class RightPanel extends MetronomePanel implements ActionListener, MetronomeObserver
+public class RightPanel extends MetronomePanel implements MetronomeObserver
 {
   private BeatSelectorPanel beatSelectorPanel;
   private JComboBox<TimeSignature> timeSignatureComboBox;
@@ -36,18 +34,16 @@ public class RightPanel extends MetronomePanel implements ActionListener, Metron
     timeSignatureComboBox = new JComboBox<>(TimeSignature.TIME_SIGNATURES_4);
     timeSignatureComboBox.setSelectedItem(TimeSignature.getDefaultTimeSignature());
     timeSignatureComboBox.setActionCommand(Constants.METER_CHANGE);
-    timeSignatureComboBox.addActionListener(this);
     this.add(timeSignatureComboBox, BorderLayout.PAGE_START);
 
     // Subdivision Selector
     subdivisionComboBox = new JComboBox<Subdivision>(Subdivision.values());
     subdivisionComboBox.setSelectedItem(Subdivision.None);
     subdivisionComboBox.setActionCommand(Constants.SUBDIVISION_CHANGE);
-    timeSignatureComboBox.addActionListener(this);
     this.add(subdivisionComboBox, BorderLayout.SOUTH);
 
     // Beat Type Selectors
-    beatSelectorPanel = new BeatSelectorPanel(TimeSignature.getDefaultTimeSignature());
+    beatSelectorPanel = new BeatSelectorPanel();
     this.add(beatSelectorPanel, BorderLayout.CENTER);
   }
 
@@ -76,13 +72,6 @@ public class RightPanel extends MetronomePanel implements ActionListener, Metron
     metronomeController.addMetronomeListener(beatSelectorPanel);
     metronomeController.addFrequentObserver(beatSelectorPanel);
 
-  }
-
-  @Override
-  public void actionPerformed(final ActionEvent e)
-  {
-    // beatSelectorPanel.updateBeatSelectors((TimeSignature) ((JComboBox<TimeSignature>)
-    // e.getSource()).getSelectedItem());
   }
 
   @Override

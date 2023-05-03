@@ -35,7 +35,6 @@ public class MetronomeController extends MetronomePreset
 
   private boolean isSubdivision, // If this is an instance of a SubdivisionController
       subdivisionOn, // If the subdivision is activated
-      firstSubdivision, // If this is the first time the subdivision is active (bug fix)
       isRunning; // The MetronomeController is running
 
   private Set<MetronomeObserver> metronomeObservers;
@@ -83,14 +82,16 @@ public class MetronomeController extends MetronomePreset
   }
 
   /**
-   * Sets the tempo of the controller. Works when the metronome is on.
+   * Sets the tempo of the controller. Works when the metronome is on. Values less than or equal to
+   * 0 are ignored.
    * 
    * @param tempo
    *          the tempo to set
    */
   public void setTempo(final double tempo)
   {
-//    System.out.println("Tempo " + tempo);
+    if (tempo <= 0.0)
+      return;
     super.setTempo(tempo);
     met.setTempo(tempo);
     if (subdivisionController != null)
@@ -98,14 +99,17 @@ public class MetronomeController extends MetronomePreset
   }
 
   /**
-   * A more precise way to change the tempo. Specify millisecond delay.
+   * A more precise way to change the tempo. Specify millisecond delay. Values less than
+   * 1 are ignored.
    * 
    * @param delay
    *          the delay to set
    */
   public void setDelay(final int delay)
   {
-//    System.out.printf("Old delay %d, New Delay: %d\n", Metronome.bpmToMilli(getTempo()), delay);
+    if (delay < 1)
+      return;
+    // System.out.printf("Old delay %d, New Delay: %d\n", Metronome.bpmToMilli(getTempo()), delay);
     super.setTempo(Metronome.milliToBpm(delay));
     met.setDelay(delay);
     if (subdivisionController != null)
@@ -171,12 +175,15 @@ public class MetronomeController extends MetronomePreset
   }
 
   /**
-   * Sets the subdivision of the metronome controller.
+   * Sets the subdivision of the metronome controller. Ignores null input;
    * 
    * @param subdivision
    */
   public void setSubdivision(final Subdivision subdivision)
   {
+    if(subdivision == null)
+      return;
+    
     subdivisionController.stop();
     subdivisionMultiplier = subdivision.getBeats();
 
@@ -190,25 +197,7 @@ public class MetronomeController extends MetronomePreset
       subdivisionOn = true;
     }
 
-    // TODO maybe this should start again?
-  }
-
-  /**
-   * Sets all the attributes of the owning MetronomeController based on the attributes of the given
-   * MetronomePreset.
-   * 
-   * @param metronomePreset
-   */
-  public void setFromMetronomePreset(final MetronomePreset metronomePreset)
-  {
-    if (metronomePreset == null)
-      return;
-
-    stop(); // Stop the metronome
-
-    // setTempo(tempo);
-    setTimeSignature(metronomePreset.getTimeSignature());
-    setSubdivision(metronomePreset.getSubdivision());
+    super.setSubdivision(subdivision);
   }
 
   // ---------- Override Methods ----------
@@ -234,7 +223,7 @@ public class MetronomeController extends MetronomePreset
       while (tokenizer.hasMoreTokens())
         acArgs.add(tokenizer.nextToken());
 
-      System.out.println(acArgs);
+      // System.out.println(acArgs);
     }
 
     boolean notify = true;
@@ -267,8 +256,6 @@ public class MetronomeController extends MetronomePreset
         break;
       case Constants.TEMPO_CHANGE:
         setTempo(Double.parseDouble(acArgs.get(1)));
-        break;
-      case "test":
         break;
       default:
         System.out.println(e.getActionCommand());
